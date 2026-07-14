@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Plated.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:Plated.Views"
+    Title="Plated"
+    FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <ShellContent
+            Title="Search"
+            Route="search"
+            ContentTemplate="{DataTemplate views:SearchPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#128269;" Size="20" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent
+            Title="Add"
+            Route="addEntry"
+            ContentTemplate="{DataTemplate views:AddEntryPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#128247;" Size="20" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent
+            Title="Profile"
+            Route="profile"
+            ContentTemplate="{DataTemplate views:ProfilePage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#128100;" Size="20" />
+            </ShellContent.Icon>
+        </ShellContent>
+    </TabBar>
+
+</Shell>

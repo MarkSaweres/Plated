@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="Plated.Views.SearchPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
+    x:DataType="vm:SearchViewModel"
+    Title="Plated">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="20">
+
+            <Label Text="Search a plate"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="28"
+                   TextColor="{StaticResource OffBlack}" />
+
+            <Label Text="Look up a license plate to read or leave comments about it."
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+
+            <Border Style="{StaticResource CardBorder}">
+                <VerticalStackLayout Spacing="14">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="STATE" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
+                        <Picker ItemsSource="{Binding States}"
+                                SelectedItem="{Binding SelectedState}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="PLATE NUMBER" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
+                        <Entry Text="{Binding PlateNumber}"
+                               Placeholder="e.g. 8D12345"
+                               Keyboard="Text" />
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Search"
+                    Command="{Binding SearchCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                    HeightRequest="50"
+                    CornerRadius="25" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Color="{StaticResource Primary}" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource PlateRed}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

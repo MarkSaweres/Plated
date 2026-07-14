@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="Plated.Views.AddEntryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
+    x:DataType="vm:AddEntryViewModel"
+    Title="Add Entry">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="20">
+
+            <Label Text="Add an entry"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="28"
+                   TextColor="{StaticResource OffBlack}" />
+
+            <Label Text="Snap or upload a photo and we'll try to read the plate for you."
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+
+            <Border Style="{StaticResource CardBorder}"
+                    HeightRequest="180"
+                    IsVisible="{Binding PhotoPath, Converter={StaticResource StringNotEmptyConverter}}">
+                <Image Source="{Binding PhotoPath}" Aspect="AspectFit" />
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Grid.Column="0"
+                        Text="Take Photo"
+                        Command="{Binding TakePhotoCommand}"
+                        BackgroundColor="{StaticResource White}"
+                        TextColor="{StaticResource OffBlack}"
+                        BorderColor="{StaticResource Gray300}"
+                        BorderWidth="1"
+                        CornerRadius="24" />
+                <Button Grid.Column="1"
+                        Text="Choose Photo"
+                        Command="{Binding PickPhotoCommand}"
+                        BackgroundColor="{StaticResource White}"
+                        TextColor="{StaticResource OffBlack}"
+                        BorderColor="{StaticResource Gray300}"
+                        BorderWidth="1"
+                        CornerRadius="24" />
+            </Grid>
+
+            <HorizontalStackLayout Spacing="8" IsVisible="{Binding IsScanning}">
+                <ActivityIndicator IsRunning="{Binding IsScanning}" Color="{StaticResource Primary}" />
+                <Label Text="Reading plate..." TextColor="{StaticResource Gray500}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <Border Style="{StaticResource CardBorder}">
+                <VerticalStackLayout Spacing="14">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="STATE" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
+                        <Picker ItemsSource="{Binding States}"
+                                SelectedItem="{Binding SelectedState}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="PLATE NUMBER" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
+                        <Entry Text="{Binding PlateNumber}"
+                               Placeholder="e.g. 8D12345"
+                               Keyboard="Text" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="YOUR COMMENT" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
+                        <Editor Text="{Binding CommentText}"
+                                Placeholder="What do you want to say about this plate?"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="90" />
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Post"
+                    Command="{Binding SubmitCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                    HeightRequest="50"
+                    CornerRadius="25" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Color="{StaticResource Primary}" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource PlateRed}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

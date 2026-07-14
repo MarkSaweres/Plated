@@ -1,0 +1,28 @@
+## .NET / MAUI
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+.vs/
+.vscode/
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Bb]ld/
+
+## Rider / Resharper
+.idea/
+*.DotSettings.user
+
+## macOS
+.DS_Store
+
+## Firebase secrets — do not commit real project credentials
+Plated/Platforms/Android/google-services.json
+Plated/Platforms/iOS/GoogleService-Info.plist

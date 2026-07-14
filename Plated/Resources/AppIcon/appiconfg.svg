@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="456" height="456" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <rect x="22" y="33" width="56" height="34" rx="6" fill="#FFFFFF" stroke="#111111" stroke-width="3" />
+    <text x="50" y="57" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700"
+          text-anchor="middle" fill="#111111">P</text>
+    <path d="M 29 62.5 Q 34.5 58.5 40 62.5 T 50 62.5 T 60 62.5 T 71 62.5" fill="none" stroke="#1D4ED8"
+          stroke-width="2.6" stroke-linecap="round" />
+</svg>

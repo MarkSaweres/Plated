@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="Plated.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+    xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
+    x:DataType="vm:LoginViewModel"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto" Padding="32">
+
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" Spacing="28">
+
+            <Border Stroke="{StaticResource OffBlack}"
+                    StrokeThickness="3"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="{StaticResource White}"
+                    Padding="28,20"
+                    HorizontalOptions="Center">
+                <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
+                    <Label Text="California"
+                           FontFamily="CaveatBold"
+                           FontSize="36"
+                           TextColor="{StaticResource PlateRed}"
+                           HorizontalOptions="Center" />
+                    <Label Text="PLATED"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="46"
+                           CharacterSpacing="2"
+                           TextColor="{StaticResource OffBlack}"
+                           HorizontalOptions="Center" />
+                    <shapes:Path Data="M0,10 C8,2 16,2 24,10 C32,18 40,18 48,10 C56,2 64,2 72,10 C80,18 88,18 96,10"
+                                 Stroke="{StaticResource PlateBlueBrush}"
+                                 StrokeThickness="4"
+                                 StrokeLineCap="Round"
+                                 HeightRequest="20"
+                                 WidthRequest="96"
+                                 HorizontalOptions="Center"
+                                 Margin="0,6,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="See what people are saying about a license plate — or leave a note of your own."
+                   FontSize="16"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                   HorizontalTextAlignment="Center"
+                   Margin="8,0" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource PlateRed}"
+                   HorizontalTextAlignment="Center"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="16">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Color="{StaticResource Primary}" />
+
+            <Button Text="Continue with Google"
+                    Command="{Binding SignInWithGoogleCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                    BackgroundColor="{StaticResource White}"
+                    TextColor="{StaticResource OffBlack}"
+                    BorderColor="{StaticResource Gray300}"
+                    BorderWidth="1"
+                    FontFamily="OpenSansSemibold"
+                    CornerRadius="24"
+                    HeightRequest="52" />
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

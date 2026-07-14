@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Plated.Core/Plated.Core.csproj" />
+  <Project Path="Plated/Plated.csproj" />
+</Solution>
