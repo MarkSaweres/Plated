@@ -1,18 +1,20 @@
 using Plated.Core.Models;
 using Plugin.Firebase.Auth;
-using Plugin.Firebase.Auth.Google;
 using Plugin.Firebase.Firestore;
 
 namespace Plated.Core.Services;
 
 public class FirebaseAuthService : IAuthService
 {
+    private readonly IGoogleSignInService _googleSignInService;
+
     public AppUser? CurrentUser { get; private set; }
 
     public event EventHandler<AppUser?>? AuthStateChanged;
 
-    public FirebaseAuthService()
+    public FirebaseAuthService(IGoogleSignInService googleSignInService)
     {
+        _googleSignInService = googleSignInService;
         CurrentUser = ToAppUser(CrossFirebaseAuth.Current.CurrentUser);
         CrossFirebaseAuth.Current.AddAuthStateListener(auth =>
         {
@@ -23,8 +25,13 @@ public class FirebaseAuthService : IAuthService
 
     public async Task<AppUser> SignInWithGoogleAsync()
     {
-        var firebaseUser = await CrossFirebaseAuthGoogle.Current.SignInWithGoogleAsync();
-        var user = ToAppUser(firebaseUser)!;
+        // Native sign-in exchanges credentials directly against FirebaseAuth.Instance on
+        // each platform; CrossFirebaseAuth.Current wraps that same singleton, so CurrentUser
+        // reflects the new session immediately once this completes.
+        await _googleSignInService.SignInAsync();
+
+        var user = ToAppUser(CrossFirebaseAuth.Current.CurrentUser)
+            ?? throw new InvalidOperationException("Google sign-in completed but no Firebase user is signed in.");
 
         await CrossFirebaseFirestore.Current
             .GetCollection("users")

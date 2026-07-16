@@ -45,6 +45,15 @@ public static class MauiProgram
         services.AddSingleton<IPhotoCaptureService, MediaPickerPhotoCaptureService>();
         services.AddSingleton<IPlateOcrService, PlateOcrService>();
         services.AddSingleton<IAppNavigator, AppNavigator>();
+
+#if ANDROID
+        // Registered as itself too so MainActivity.OnActivityResult can resolve the same
+        // singleton instance to forward the sign-in flow's result.
+        services.AddSingleton<GoogleSignInService>();
+        services.AddSingleton<IGoogleSignInService>(sp => sp.GetRequiredService<GoogleSignInService>());
+#elif IOS
+        services.AddSingleton<IGoogleSignInService, GoogleSignInService>();
+#endif
     }
 
     private static void RegisterViewModels(IServiceCollection services)

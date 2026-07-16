@@ -33,6 +33,8 @@ Both `.rules` files are provided as a starting point: authenticated users can re
 Plated/AppConfig.cs → GoogleWebClientId
 ```
 
+You also need to register your debug (and later, release) keystore's **SHA-1 fingerprint** under the Android app in Firebase project settings — Google Sign-In fails silently/crashes without it. Get it via `keytool -list -v -keystore %USERPROFILE%\.android\debug.keystore -alias androiddebugkey -storepass android -keypass android` (Windows) and paste the SHA-1 into Firebase console → Project settings → your Android app → "Add fingerprint".
+
 **iOS** — open the `GoogleService-Info.plist` you downloaded and copy its `REVERSED_CLIENT_ID` value into:
 
 ```
@@ -51,3 +53,5 @@ Open `Plated.slnx` in Visual Studio 2026 and run the `Plated` project on an Andr
 - The report/flag threshold (3 reports → auto-hide) lives in `FirestorePlateService.HideAfterReportCount`.
 - There's currently no admin/moderation UI to review or un-hide reported comments — that'd be a good next feature.
 - Package versions for `Plugin.Firebase.*` currently target `net9.0`-flavored TFMs (the latest available at the time of writing); NuGet resolves these into the `net10.0-android`/`net10.0-ios` app just fine, but watch for newer releases that add native `net10.0` support.
+- **Google Sign-In is implemented natively per platform**, not via `Plugin.Firebase.Auth.Google` — that package never moved past 3.1.2 and depends on `Plugin.Firebase.Core` 3.x types that no longer exist in 4.x+, which segfaults if referenced alongside modern `Plugin.Firebase.Core`/`Auth`. See `Plated/Platforms/Android/GoogleSignInService.cs` (Play Services Identity API) and `Plated/Platforms/iOS/GoogleSignInService.cs` (legacy `Google.SignIn` SDK). Both exchange a Google ID token for a Firebase credential directly via the native Firebase Auth SDK (`FirebaseAuth.Instance.SignInWithCredentialAsync` / `Auth.DefaultInstance.SignInWithCredentialAsync`); `Plugin.Firebase.Auth`'s `CrossFirebaseAuth.Current` wraps that same native singleton, so its `CurrentUser`/auth-state-listener stay in sync automatically.
+- The iOS Google Sign-In path was verified by decompiling the actual `Xamarin.Google.iOS.SignIn` / `AdamE.Firebase.iOS.Auth` packages for exact API signatures, but — unlike Android — it has **not** been compiled or run, since this environment has no Xcode/iOS SDK available. Treat it as best-effort until it's actually built on a Mac.

@@ -1,5 +1,5 @@
 using Foundation;
-using Plugin.Firebase.Auth.Google;
+using Google.SignIn;
 using Plugin.Firebase.Core.Platforms.iOS;
 using UIKit;
 
@@ -13,10 +13,13 @@ public class AppDelegate : MauiUIApplicationDelegate
     public override bool FinishedLaunching(UIApplication app, NSDictionary options)
     {
         CrossFirebase.Initialize();
-        FirebaseAuthGoogleImplementation.Initialize();
+
+        var googleServicesInfo = NSMutableDictionary.FromFile("GoogleService-Info.plist");
+        SignIn.SharedInstance.ClientId = googleServicesInfo["CLIENT_ID"]!.ToString()!;
+
         return base.FinishedLaunching(app, options);
     }
 
     public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
-        => FirebaseAuthGoogleImplementation.OpenUrl(app, url, options) || base.OpenUrl(app, url, options);
+        => SignIn.SharedInstance.HandleUrl(url) || base.OpenUrl(app, url, options);
 }

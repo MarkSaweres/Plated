@@ -2,7 +2,9 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Plugin.Firebase.Auth.Google;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.ApplicationModel;
+using Plated.Services;
 using Plugin.Firebase.Core.Platforms.Android;
 
 namespace Plated;
@@ -13,13 +15,14 @@ public class MainActivity : MauiAppCompatActivity
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        CrossFirebase.Initialize(this, () => this);
-        FirebaseAuthGoogleImplementation.Initialize(AppConfig.GoogleWebClientId);
+        CrossFirebase.Initialize(this, () => Platform.CurrentActivity!);
     }
 
     protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
     {
         base.OnActivityResult(requestCode, resultCode, data);
-        _ = FirebaseAuthGoogleImplementation.HandleActivityResultAsync(requestCode, resultCode, data!);
+
+        var googleSignInService = IPlatformApplication.Current?.Services.GetService<GoogleSignInService>();
+        googleSignInService?.HandleActivityResult(requestCode, resultCode, data);
     }
 }
