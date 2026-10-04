@@ -1,11 +1,15 @@
 # Plated
 
-A .NET MAUI app (Android + iOS) for looking up license plates and reading/leaving comments about them.
+A cross-platform mobile app for looking up license plates and reading or leaving comments about them. Built with .NET MAUI for Android and iOS. **Status: in progress.**
 
-- **Sign-in**: Google Sign-In via Firebase Auth
-- **Data**: Firestore (plates, comments, reports), Firebase Storage (photos)
-- **OCR**: on-device ML Kit text recognition (via `Plugin.Maui.OCR`) to auto-fill a plate number from a photo
-- **Moderation**: sign-in required to post; comments can be reported/flagged and are auto-hidden after 3 reports
+## Highlights
+
+- **MVVM architecture.** Built with CommunityToolkit.Mvvm and split into a platform-agnostic `Plated.Core` library (models, services, view models) and a thin MAUI app head, so the core logic builds without any mobile workload.
+- **Firebase back end.** Firebase Auth with native Google Sign-In on each platform, Firestore for plates and comments, and Firebase Storage for photos. Security rules limit writes to each user's own data.
+- **On-device OCR.** ML Kit on Android and Vision on iOS read a plate number from a photo with no network call, and the result stays editable before posting.
+- **Community moderation.** Signed-in users can report comments, and a comment is hidden automatically after three reports.
+
+**Tech stack:** C#, .NET MAUI, CommunityToolkit.Mvvm, Firebase Auth, Cloud Firestore, Firebase Storage, Google ML Kit, XAML
 
 ## Project layout
 
