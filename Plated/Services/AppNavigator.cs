@@ -13,6 +13,8 @@ public class AppNavigator : IAppNavigator
         _serviceProvider = serviceProvider;
     }
 
+    private static Page RootPage => Application.Current!.Windows[0].Page!;
+
     public void ShowMainApp()
     {
         Application.Current!.Windows[0].Page = _serviceProvider.GetRequiredService<AppShell>();
@@ -20,6 +22,12 @@ public class AppNavigator : IAppNavigator
 
     public void ShowLogin()
     {
-        Application.Current!.Windows[0].Page = _serviceProvider.GetRequiredService<LoginPage>();
+        Application.Current!.Windows[0].Page = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
     }
+
+    public Task ShowCreateAccountAsync()
+        => RootPage.Navigation.PushAsync(_serviceProvider.GetRequiredService<CreateAccountPage>());
+
+    public Task GoBackAsync()
+        => RootPage.Navigation.PopAsync();
 }

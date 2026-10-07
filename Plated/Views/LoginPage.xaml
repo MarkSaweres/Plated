@@ -6,6 +6,7 @@
     xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:LoginViewModel"
+    NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
 
     <ScrollView>
@@ -79,7 +80,7 @@
 
                     <Button Text="Create Account"
                             Style="{StaticResource SecondaryButton}"
-                            Command="{Binding CreateAccountCommand}"
+                            Command="{Binding GoToCreateAccountCommand}"
                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
                 </VerticalStackLayout>
             </Border>

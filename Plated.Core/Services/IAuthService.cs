@@ -12,7 +12,7 @@ public interface IAuthService
 
     Task<AppUser> SignInWithEmailAsync(string email, string password);
 
-    Task<AppUser> CreateAccountWithEmailAsync(string email, string password);
+    Task<AppUser> CreateAccountWithEmailAsync(string firstName, string lastName, string email, string password);
 
     Task SignOutAsync();
 }

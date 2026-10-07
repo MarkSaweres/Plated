@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Plated.Core.Navigation;
@@ -25,19 +24,10 @@ public partial class LoginViewModel : BaseViewModel
 
     [RelayCommand]
     private Task SignInWithGoogleAsync()
-        => RunAuthAsync(
-            () => _authService.SignInWithGoogleAsync(),
-            "Google sign-in failed. Please try again.");
+        => RunAuthAsync(() => _authService.SignInWithGoogleAsync(), "Google sign-in failed. Please try again.");
 
     [RelayCommand]
-    private Task SignInWithEmailAsync()
-        => RunEmailAuthAsync(() => _authService.SignInWithEmailAsync(Email, Password));
-
-    [RelayCommand]
-    private Task CreateAccountAsync()
-        => RunEmailAuthAsync(() => _authService.CreateAccountWithEmailAsync(Email, Password));
-
-    private async Task RunEmailAuthAsync(Func<Task> action)
+    private async Task SignInWithEmailAsync()
     {
         if (string.IsNullOrWhiteSpace(Email) || !Email.Contains('@'))
         {
@@ -45,18 +35,23 @@ public partial class LoginViewModel : BaseViewModel
             return;
         }
 
-        if (Password.Length < 6)
+        if (string.IsNullOrEmpty(Password))
         {
-            ErrorMessage = "Password must be at least 6 characters.";
+            ErrorMessage = "Enter your password.";
             return;
         }
 
-        // Firebase's email/password error messages are user-readable
-        // (e.g. "The email address is already in use by another account").
-        await RunAuthAsync(action, "Couldn't sign in. Please try again.", showExceptionMessage: true);
+        await RunAuthAsync(() => _authService.SignInWithEmailAsync(Email, Password), "Couldn't sign in. Please try again.");
     }
 
-    private async Task RunAuthAsync(Func<Task> action, string failureMessage, bool showExceptionMessage = false)
+    [RelayCommand]
+    private Task GoToCreateAccountAsync()
+    {
+        ErrorMessage = null;
+        return _navigator.ShowCreateAccountAsync();
+    }
+
+    private async Task RunAuthAsync(Func<Task> action, string failureMessage)
     {
         if (IsBusy)
         {
@@ -72,12 +67,7 @@ public partial class LoginViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[Plated] Sign-in failed: {ex}");
-#if DEBUG
-            ErrorMessage = $"{failureMessage} ({ex.Message})";
-#else
-            ErrorMessage = showExceptionMessage ? ex.Message : failureMessage;
-#endif
+            ShowAuthError(ex, failureMessage);
         }
         finally
         {

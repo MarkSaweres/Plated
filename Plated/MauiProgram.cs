@@ -72,6 +72,7 @@ public static class MauiProgram
     private static void RegisterViewModels(IServiceCollection services)
     {
         services.AddTransient<LoginViewModel>();
+        services.AddTransient<CreateAccountViewModel>();
         services.AddTransient<SearchViewModel>();
         services.AddTransient<AddEntryViewModel>();
         services.AddTransient<PlateDetailViewModel>();
@@ -81,6 +82,7 @@ public static class MauiProgram
     private static void RegisterPages(IServiceCollection services)
     {
         services.AddTransient<LoginPage>();
+        services.AddTransient<CreateAccountPage>();
         services.AddTransient<SearchPage>();
         services.AddTransient<AddEntryPage>();
         services.AddTransient<PlateDetailPage>();

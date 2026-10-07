@@ -48,17 +48,18 @@ public class FirebaseAuthService : IAuthService
         return user;
     }
 
-    public async Task<AppUser> CreateAccountWithEmailAsync(string email, string password)
+    public async Task<AppUser> CreateAccountWithEmailAsync(string firstName, string lastName, string email, string password)
     {
-        var trimmedEmail = email.Trim();
-        var firebaseUser = await CrossFirebaseAuth.Current.CreateUserAsync(trimmedEmail, password);
+        var first = firstName.Trim();
+        var last = lastName.Trim();
 
-        // Email accounts have no display name; default to the part before the @.
-        await firebaseUser.UpdateProfileAsync(displayName: trimmedEmail.Split('@')[0]);
+        var firebaseUser = await CrossFirebaseAuth.Current.CreateUserAsync(email.Trim(), password);
+
+        await firebaseUser.UpdateProfileAsync(displayName: $"{first} {last}");
         await CrossFirebaseAuth.Current.ReloadCurrentUserAsync();
 
         var user = ToAppUser(CrossFirebaseAuth.Current.CurrentUser)!;
-        await SaveUserProfileAsync(user);
+        await SaveUserProfileAsync(user, first, last);
         return user;
     }
 
@@ -66,21 +67,31 @@ public class FirebaseAuthService : IAuthService
     /// Best-effort: the profile document isn't needed to be signed in, and a Firestore write
     /// waits indefinitely when the database isn't reachable/created, so never let it block login.
     /// </summary>
-    private static async Task SaveUserProfileAsync(AppUser user)
+    private static async Task SaveUserProfileAsync(AppUser user, string? firstName = null, string? lastName = null)
     {
         try
         {
+            var data = new Dictionary<object, object>
+            {
+                ["uid"] = user.Uid,
+                ["displayName"] = user.DisplayName,
+                ["email"] = user.Email,
+                ["photoUrl"] = user.PhotoUrl ?? string.Empty,
+                ["lastSignInAt"] = FieldValue.ServerTimestamp(),
+            };
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                data["firstName"] = firstName;
+            }
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                data["lastName"] = lastName;
+            }
+
             var write = CrossFirebaseFirestore.Current
                 .GetCollection("users")
                 .GetDocument(user.Uid)
-                .SetDataAsync(new Dictionary<object, object>
-                {
-                    ["uid"] = user.Uid,
-                    ["displayName"] = user.DisplayName,
-                    ["email"] = user.Email,
-                    ["photoUrl"] = user.PhotoUrl ?? string.Empty,
-                    ["lastSignInAt"] = FieldValue.ServerTimestamp(),
-                }, SetOptions.Merge());
+                .SetDataAsync(data, SetOptions.Merge());
 
             var finished = await Task.WhenAny(write, Task.Delay(TimeSpan.FromSeconds(8)));
             if (finished == write)

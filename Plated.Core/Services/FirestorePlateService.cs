@@ -71,19 +71,23 @@ public class FirestorePlateService : IPlateService
 
     public async Task<PlateComment> AddCommentAsync(string plateId, AppUser author, string text, string? photoUrl)
     {
-        var docRef = await CrossFirebaseFirestore.Current
+        // Don't use AddDocumentAsync(object): the plugin reads [FirestoreProperty] attributes off the
+        // object's properties, so a Dictionary would be written as an empty document.
+        var docRef = CrossFirebaseFirestore.Current
             .GetCollection($"plates/{plateId}/comments")
-            .AddDocumentAsync(new Dictionary<object, object>
-            {
-                ["authorUid"] = author.Uid,
-                ["authorDisplayName"] = author.DisplayName,
-                ["authorPhotoUrl"] = author.PhotoUrl ?? string.Empty,
-                ["text"] = text,
-                ["photoUrl"] = photoUrl ?? string.Empty,
-                ["createdAt"] = FieldValue.ServerTimestamp(),
-                ["reportCount"] = 0,
-                ["isHidden"] = false,
-            });
+            .CreateDocument();
+
+        await docRef.SetDataAsync(new Dictionary<object, object>
+        {
+            ["authorUid"] = author.Uid,
+            ["authorDisplayName"] = author.DisplayName,
+            ["authorPhotoUrl"] = author.PhotoUrl ?? string.Empty,
+            ["text"] = text,
+            ["photoUrl"] = photoUrl ?? string.Empty,
+            ["createdAt"] = FieldValue.ServerTimestamp(),
+            ["reportCount"] = 0,
+            ["isHidden"] = false,
+        });
 
         await CrossFirebaseFirestore.Current
             .GetDocument($"plates/{plateId}")
@@ -111,7 +115,8 @@ public class FirestorePlateService : IPlateService
     {
         await CrossFirebaseFirestore.Current
             .GetCollection($"plates/{plateId}/comments/{commentId}/reports")
-            .AddDocumentAsync(new Dictionary<object, object>
+            .CreateDocument()
+            .SetDataAsync(new Dictionary<object, object>
             {
                 ["reporterUid"] = reporterUid,
                 ["reason"] = reason.ToString(),

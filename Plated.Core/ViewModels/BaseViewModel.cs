@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Plated.Core.Services;
 
 namespace Plated.Core.ViewModels;
 
@@ -23,5 +24,19 @@ public partial class BaseViewModel : ObservableObject
 #else
         ErrorMessage = friendlyMessage;
 #endif
+    }
+
+    /// <summary>Friendly message for known auth failures; falls back to <see cref="ShowError"/>.</summary>
+    protected void ShowAuthError(Exception ex, string fallbackMessage)
+    {
+        var friendly = AuthErrorMessages.TryDescribe(ex);
+        if (friendly is null)
+        {
+            ShowError(fallbackMessage, ex);
+            return;
+        }
+
+        Debug.WriteLine($"[Plated] Auth failed: {ex}");
+        ErrorMessage = friendly;
     }
 }

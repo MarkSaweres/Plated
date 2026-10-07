@@ -23,7 +23,7 @@ public partial class App : Application
     {
         Page rootPage = _authService.CurrentUser is not null
             ? _serviceProvider.GetRequiredService<AppShell>()
-            : _serviceProvider.GetRequiredService<LoginPage>();
+            : new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
 
         return new Window(rootPage);
     }

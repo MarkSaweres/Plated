@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="Plated.Views.CreateAccountPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
+    x:DataType="vm:CreateAccountViewModel"
+    NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,12,24,32" Spacing="20">
+
+            <ImageButton Command="{Binding BackCommand}"
+                         HorizontalOptions="Start"
+                         WidthRequest="44"
+                         HeightRequest="44"
+                         Padding="10"
+                         BackgroundColor="Transparent">
+                <ImageButton.Source>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE5C4;" Size="24" Color="{StaticResource Ink}" />
+                </ImageButton.Source>
+            </ImageButton>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Create your account" Style="{StaticResource ScreenTitle}" />
+                <Label Text="Your name is shown next to your comments."
+                       Style="{StaticResource Subtle}" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource CardBorder}" Padding="18">
+                <VerticalStackLayout Spacing="12">
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" Style="{StaticResource FieldBorder}">
+                            <Entry Text="{Binding FirstName}" Placeholder="First name" />
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource FieldBorder}">
+                            <Entry Text="{Binding LastName}" Placeholder="Last name" />
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0" Style="{StaticResource IconGlyph}" Text="&#xE158;" />
+                            <Entry Grid.Column="1"
+                                   Text="{Binding Email}"
+                                   Placeholder="Email"
+                                   Keyboard="Email" />
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0" Style="{StaticResource IconGlyph}" Text="&#xE897;" />
+                            <Entry Grid.Column="1"
+                                   Text="{Binding Password}"
+                                   Placeholder="Password (6+ characters)"
+                                   IsPassword="True" />
+                        </Grid>
+                    </Border>
+
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="{StaticResource PlateRed}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="{StaticResource Primary}" />
+
+                    <Button Text="Create Account"
+                            Command="{Binding CreateAccountCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="I already have an account"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding BackCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
