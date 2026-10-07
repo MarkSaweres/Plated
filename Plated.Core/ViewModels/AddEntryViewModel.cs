@@ -117,7 +117,7 @@ public partial class AddEntryViewModel : BaseViewModel
             string? photoUrl = null;
             if (!string.IsNullOrEmpty(PhotoPath))
             {
-                photoUrl = await _storageService.UploadPlatePhotoAsync(PhotoPath, plate.Id);
+                photoUrl = await _storageService.TryUploadPlatePhotoAsync(PhotoPath, plate.Id);
             }
 
             await _plateService.AddCommentAsync(plate.Id, user, CommentText.Trim(), photoUrl);

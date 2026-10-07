@@ -132,7 +132,7 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
             string? photoUrl = null;
             if (!string.IsNullOrEmpty(PendingPhotoPath))
             {
-                photoUrl = await _storageService.UploadPlatePhotoAsync(PendingPhotoPath, _plateId);
+                photoUrl = await _storageService.TryUploadPlatePhotoAsync(PendingPhotoPath, _plateId);
             }
 
             var comment = await _plateService.AddCommentAsync(_plateId, user, NewCommentText.Trim(), photoUrl);

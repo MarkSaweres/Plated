@@ -2,5 +2,9 @@ namespace Plated.Core.Services;
 
 public interface IStorageService
 {
-    Task<string> UploadPlatePhotoAsync(string localFilePath, string plateId);
+    /// <summary>
+    /// Uploads a photo and returns its download URL, or null if the upload failed or timed out
+    /// (for example when Firebase Storage isn't set up). Callers should post without the photo.
+    /// </summary>
+    Task<string?> TryUploadPlatePhotoAsync(string localFilePath, string plateId);
 }
