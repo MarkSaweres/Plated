@@ -35,9 +35,9 @@ public partial class SearchViewModel : BaseViewModel
             await Shell.Current.GoToAsync(
                 $"{Routes.PlateDetail}?{Routes.StateQueryKey}={SelectedState}&{Routes.PlateNumberQueryKey}={Uri.EscapeDataString(PlateNumber)}");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Something went wrong. Please try again.";
+            ShowError("Something went wrong. Please try again.", ex);
         }
         finally
         {

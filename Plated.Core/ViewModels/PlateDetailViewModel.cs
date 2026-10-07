@@ -84,9 +84,9 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
                 }
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Couldn't load this plate. Check your connection and try again.";
+            ShowError("Couldn't load this plate. Check your connection and try again.", ex);
         }
         finally
         {
@@ -141,9 +141,9 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
             NewCommentText = string.Empty;
             PendingPhotoPath = null;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Couldn't post your comment. Please try again.";
+            ShowError("Couldn't post your comment. Please try again.", ex);
         }
         finally
         {
@@ -186,9 +186,14 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
             await _plateService.ReportCommentAsync(_plateId, comment.Id, user.Uid, reason, null);
             await Shell.Current.DisplayAlertAsync("Thanks", "This comment has been reported.", "OK");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", "Couldn't submit the report. Please try again.", "OK");
+            System.Diagnostics.Debug.WriteLine($"[Plated] Report failed: {ex}");
+            var detail = "Couldn't submit the report. Please try again.";
+#if DEBUG
+            detail += $" ({ex.Message})";
+#endif
+            await Shell.Current.DisplayAlertAsync("Error", detail, "OK");
         }
     }
 }

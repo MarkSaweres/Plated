@@ -131,9 +131,9 @@ public partial class AddEntryViewModel : BaseViewModel
             await Shell.Current.GoToAsync(
                 $"{Routes.PlateDetail}?{Routes.StateQueryKey}={state}&{Routes.PlateNumberQueryKey}={Uri.EscapeDataString(number)}");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Couldn't submit your entry. Please try again.";
+            ShowError("Couldn't submit your entry. Please try again.", ex);
         }
         finally
         {

@@ -12,6 +12,9 @@ public partial class App : Application
     public App(IAuthService authService, IServiceProvider serviceProvider)
     {
         InitializeComponent();
+
+        // The design is light-only for now.
+        UserAppTheme = Microsoft.Maui.ApplicationModel.AppTheme.Light;
         _authService = authService;
         _serviceProvider = serviceProvider;
     }

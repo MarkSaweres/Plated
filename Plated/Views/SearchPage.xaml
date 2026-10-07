@@ -5,50 +5,59 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:SearchViewModel"
-    Title="Plated">
+    Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="20">
+        <VerticalStackLayout Padding="24,20,24,32" Spacing="22">
 
-            <Label Text="Search a plate"
-                   FontFamily="OpenSansSemibold"
-                   FontSize="28"
-                   TextColor="{StaticResource OffBlack}" />
+            <Label Text="PLATED"
+                   Style="{StaticResource FieldLabel}"
+                   FontSize="13"
+                   CharacterSpacing="4" />
 
-            <Label Text="Look up a license plate to read or leave comments about it."
-                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Look up a plate" Style="{StaticResource ScreenTitle}" />
+                <Label Text="Read what people have said about a car, or be the first to leave a note."
+                       Style="{StaticResource Subtle}" />
+            </VerticalStackLayout>
 
-            <Border Style="{StaticResource CardBorder}">
-                <VerticalStackLayout Spacing="14">
-
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="STATE" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
-                        <Picker ItemsSource="{Binding States}"
-                                SelectedItem="{Binding SelectedState}" />
-                    </VerticalStackLayout>
-
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="PLATE NUMBER" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
-                        <Entry Text="{Binding PlateNumber}"
-                               Placeholder="e.g. 8D12345"
-                               Keyboard="Text" />
-                    </VerticalStackLayout>
-
+            <Border Style="{StaticResource PlateBorder}" Padding="20,10,20,18">
+                <VerticalStackLayout Spacing="0">
+                    <Picker ItemsSource="{Binding States}"
+                            SelectedItem="{Binding SelectedState}"
+                            FontFamily="CaveatBold"
+                            FontSize="30"
+                            TextColor="{StaticResource PlateRed}"
+                            HorizontalTextAlignment="Center" />
+                    <Entry Text="{Binding PlateNumber}"
+                           Placeholder="8ABC123"
+                           PlaceholderColor="{StaticResource Gray300}"
+                           TextTransform="Uppercase"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="36"
+                           CharacterSpacing="4"
+                           TextColor="{StaticResource OffBlack}"
+                           HorizontalTextAlignment="Center"
+                           ReturnType="Search"
+                           ReturnCommand="{Binding SearchCommand}" />
                 </VerticalStackLayout>
             </Border>
 
-            <Button Text="Search"
+            <Button Text="Search plate"
                     Command="{Binding SearchCommand}"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                    HeightRequest="50"
-                    CornerRadius="25" />
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE8B6;" Size="20" Color="{StaticResource White}" />
+                </Button.ImageSource>
+            </Button>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                IsVisible="{Binding IsBusy}"
-                                Color="{StaticResource Primary}" />
+                               IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource Primary}" />
 
             <Label Text="{Binding ErrorMessage}"
                    TextColor="{StaticResource PlateRed}"
+                   FontSize="13"
                    IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
 
         </VerticalStackLayout>

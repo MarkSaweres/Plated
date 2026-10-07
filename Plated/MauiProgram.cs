@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui;
+using Microsoft.Maui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Plated.Core.Navigation;
@@ -24,17 +25,29 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("Caveat-Bold.ttf", "CaveatBold");
+                fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
 
+        ConfigureHandlers();
         RegisterServices(builder.Services);
         RegisterViewModels(builder.Services);
         RegisterPages(builder.Services);
 
         return builder.Build();
+    }
+
+    /// <summary>Removes Android's default Material underline so our rounded field containers look clean.</summary>
+    private static void ConfigureHandlers()
+    {
+#if ANDROID
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("Borderless", (handler, view) => handler.PlatformView.Background = null);
+        Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("Borderless", (handler, view) => handler.PlatformView.Background = null);
+        Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("Borderless", (handler, view) => handler.PlatformView.Background = null);
+#endif
     }
 
     private static void RegisterServices(IServiceCollection services)

@@ -13,7 +13,7 @@
             Route="search"
             ContentTemplate="{DataTemplate views:SearchPage}">
             <ShellContent.Icon>
-                <FontImageSource Glyph="&#128269;" Size="20" />
+                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE8B6;" Size="26" Color="{StaticResource Gray500}" />
             </ShellContent.Icon>
         </ShellContent>
 
@@ -22,7 +22,7 @@
             Route="addEntry"
             ContentTemplate="{DataTemplate views:AddEntryPage}">
             <ShellContent.Icon>
-                <FontImageSource Glyph="&#128247;" Size="20" />
+                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE439;" Size="26" Color="{StaticResource Gray500}" />
             </ShellContent.Icon>
         </ShellContent>
 
@@ -31,7 +31,7 @@
             Route="profile"
             ContentTemplate="{DataTemplate views:ProfilePage}">
             <ShellContent.Icon>
-                <FontImageSource Glyph="&#128100;" Size="20" />
+                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE7FD;" Size="26" Color="{StaticResource Gray500}" />
             </ShellContent.Icon>
         </ShellContent>
     </TabBar>

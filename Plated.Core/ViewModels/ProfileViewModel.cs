@@ -36,9 +36,9 @@ public partial class ProfileViewModel : BaseViewModel
             await _authService.SignOutAsync();
             _navigator.ShowLogin();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Couldn't sign out. Please try again.";
+            ShowError("Couldn't sign out. Please try again.", ex);
         }
         finally
         {

@@ -9,14 +9,9 @@
     Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="32" Spacing="24" VerticalOptions="Center">
+        <VerticalStackLayout Padding="24,32" Spacing="22" VerticalOptions="Center">
 
-            <Border Stroke="{StaticResource OffBlack}"
-                    StrokeThickness="3"
-                    StrokeShape="RoundRectangle 20"
-                    BackgroundColor="{StaticResource White}"
-                    Padding="28,20"
-                    HorizontalOptions="Center">
+            <Border Style="{StaticResource PlateBorder}" HorizontalOptions="Center" Padding="30,18">
                 <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
                     <Label Text="California"
                            FontFamily="CaveatBold"
@@ -40,66 +35,65 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Label Text="See what people are saying about a license plate — or leave a note of your own."
-                   FontSize="16"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+            <Label Text="See what people are saying about a license plate, or leave a note of your own."
+                   Style="{StaticResource Subtle}"
                    HorizontalTextAlignment="Center"
-                   Margin="8,0" />
+                   Margin="12,0" />
 
-            <Border Style="{StaticResource CardBorder}">
-                <VerticalStackLayout Spacing="4">
-                    <Entry Text="{Binding Email}"
-                           Placeholder="Email"
-                           Keyboard="Email" />
-                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
-                    <Entry Text="{Binding Password}"
-                           Placeholder="Password (6+ characters)"
-                           IsPassword="True" />
+            <Border Style="{StaticResource CardBorder}" Padding="18">
+                <VerticalStackLayout Spacing="12">
+
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0" Style="{StaticResource IconGlyph}" Text="&#xE158;" />
+                            <Entry Grid.Column="1"
+                                   Text="{Binding Email}"
+                                   Placeholder="Email"
+                                   Keyboard="Email" />
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0" Style="{StaticResource IconGlyph}" Text="&#xE897;" />
+                            <Entry Grid.Column="1"
+                                   Text="{Binding Password}"
+                                   Placeholder="Password (6+ characters)"
+                                   IsPassword="True" />
+                        </Grid>
+                    </Border>
+
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="{StaticResource PlateRed}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="{StaticResource Primary}" />
+
+                    <Button Text="Sign In"
+                            Command="{Binding SignInWithEmailCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+
+                    <Button Text="Create Account"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CreateAccountCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
                 </VerticalStackLayout>
             </Border>
 
-            <Label Text="{Binding ErrorMessage}"
-                   TextColor="{StaticResource PlateRed}"
-                   HorizontalTextAlignment="Center"
-                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                IsVisible="{Binding IsBusy}"
-                                Color="{StaticResource Primary}" />
-
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                <Button Grid.Column="0"
-                        Text="Sign In"
-                        Command="{Binding SignInWithEmailCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        CornerRadius="24"
-                        HeightRequest="50" />
-                <Button Grid.Column="1"
-                        Text="Create Account"
-                        Command="{Binding CreateAccountCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        BackgroundColor="{StaticResource White}"
-                        TextColor="{StaticResource OffBlack}"
-                        BorderColor="{StaticResource Gray300}"
-                        BorderWidth="1"
-                        CornerRadius="24"
-                        HeightRequest="50" />
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
+                <BoxView Grid.Column="0" HeightRequest="1" VerticalOptions="Center" BackgroundColor="{StaticResource Line}" />
+                <Label Grid.Column="1" Text="or" Style="{StaticResource Subtle}" FontSize="13" />
+                <BoxView Grid.Column="2" HeightRequest="1" VerticalOptions="Center" BackgroundColor="{StaticResource Line}" />
             </Grid>
 
-            <Label Text="or"
-                   TextColor="{StaticResource Gray500}"
-                   HorizontalOptions="Center" />
-
             <Button Text="Continue with Google"
+                    Style="{StaticResource SecondaryButton}"
                     Command="{Binding SignInWithGoogleCommand}"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                    BackgroundColor="{StaticResource White}"
-                    TextColor="{StaticResource OffBlack}"
-                    BorderColor="{StaticResource Gray300}"
-                    BorderWidth="1"
-                    FontFamily="OpenSansSemibold"
-                    CornerRadius="24"
-                    HeightRequest="52" />
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 
         </VerticalStackLayout>
     </ScrollView>

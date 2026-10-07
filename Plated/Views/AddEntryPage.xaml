@@ -5,89 +5,112 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:AddEntryViewModel"
-    Title="Add Entry">
+    Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="20">
+        <VerticalStackLayout Padding="24,20,24,32" Spacing="20">
 
-            <Label Text="Add an entry"
-                   FontFamily="OpenSansSemibold"
-                   FontSize="28"
-                   TextColor="{StaticResource OffBlack}" />
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Add an entry" Style="{StaticResource ScreenTitle}" />
+                <Label Text="Snap or upload a photo and we'll try to read the plate for you."
+                       Style="{StaticResource Subtle}" />
+            </VerticalStackLayout>
 
-            <Label Text="Snap or upload a photo and we'll try to read the plate for you."
-                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Grid>
+                <Border Style="{StaticResource FieldBorder}"
+                        HeightRequest="170"
+                        Padding="0"
+                        IsVisible="{Binding PhotoPath, Converter={StaticResource StringIsEmptyConverter}}">
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="6">
+                        <Label Style="{StaticResource IconGlyph}" Text="&#xE439;" FontSize="42" HorizontalOptions="Center" />
+                        <Label Text="Add a photo of the plate"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource Ink}"
+                               HorizontalOptions="Center" />
+                        <Label Text="Plate numbers are read on your phone"
+                               Style="{StaticResource Subtle}"
+                               FontSize="13"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Border Style="{StaticResource CardBorder}"
-                    HeightRequest="180"
-                    IsVisible="{Binding PhotoPath, Converter={StaticResource StringNotEmptyConverter}}">
-                <Image Source="{Binding PhotoPath}" Aspect="AspectFit" />
-            </Border>
+                <Border Style="{StaticResource FieldBorder}"
+                        HeightRequest="220"
+                        Padding="0"
+                        IsVisible="{Binding PhotoPath, Converter={StaticResource StringNotEmptyConverter}}">
+                    <Image Source="{Binding PhotoPath}" Aspect="AspectFill" />
+                </Border>
+            </Grid>
 
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                 <Button Grid.Column="0"
-                        Text="Take Photo"
-                        Command="{Binding TakePhotoCommand}"
-                        BackgroundColor="{StaticResource White}"
-                        TextColor="{StaticResource OffBlack}"
-                        BorderColor="{StaticResource Gray300}"
-                        BorderWidth="1"
-                        CornerRadius="24" />
+                        Text="Camera"
+                        Command="{Binding TakePhotoCommand}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE412;" Size="20" Color="{StaticResource White}" />
+                    </Button.ImageSource>
+                </Button>
                 <Button Grid.Column="1"
-                        Text="Choose Photo"
-                        Command="{Binding PickPhotoCommand}"
-                        BackgroundColor="{StaticResource White}"
-                        TextColor="{StaticResource OffBlack}"
-                        BorderColor="{StaticResource Gray300}"
-                        BorderWidth="1"
-                        CornerRadius="24" />
+                        Text="Gallery"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding PickPhotoCommand}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE413;" Size="20" Color="{StaticResource Ink}" />
+                    </Button.ImageSource>
+                </Button>
             </Grid>
 
-            <HorizontalStackLayout Spacing="8" IsVisible="{Binding IsScanning}">
-                <ActivityIndicator IsRunning="{Binding IsScanning}" Color="{StaticResource Primary}" />
-                <Label Text="Reading plate..." TextColor="{StaticResource Gray500}" VerticalOptions="Center" />
+            <HorizontalStackLayout Spacing="10" IsVisible="{Binding IsScanning}">
+                <ActivityIndicator IsRunning="{Binding IsScanning}" Color="{StaticResource Accent}" />
+                <Label Text="Reading the plate..." Style="{StaticResource Subtle}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
-            <Border Style="{StaticResource CardBorder}">
-                <VerticalStackLayout Spacing="14">
+            <Border Style="{StaticResource CardBorder}" Padding="18">
+                <VerticalStackLayout Spacing="16">
 
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="STATE" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
-                        <Picker ItemsSource="{Binding States}"
-                                SelectedItem="{Binding SelectedState}" />
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="STATE" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Picker ItemsSource="{Binding States}" SelectedItem="{Binding SelectedState}" />
+                        </Border>
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="PLATE NUMBER" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
-                        <Entry Text="{Binding PlateNumber}"
-                               Placeholder="e.g. 8D12345"
-                               Keyboard="Text" />
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="PLATE NUMBER" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Entry Text="{Binding PlateNumber}"
+                                   Placeholder="8ABC123"
+                                   TextTransform="Uppercase"
+                                   FontFamily="OpenSansSemibold"
+                                   CharacterSpacing="2" />
+                        </Border>
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="YOUR COMMENT" FontSize="12" CharacterSpacing="1" TextColor="{StaticResource Gray500}" />
-                        <Editor Text="{Binding CommentText}"
-                                Placeholder="What do you want to say about this plate?"
-                                AutoSize="TextChanges"
-                                MinimumHeightRequest="90" />
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="YOUR COMMENT" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource FieldBorder}" Padding="14,6">
+                            <Editor Text="{Binding CommentText}"
+                                    Placeholder="What do you want to say about this plate?"
+                                    AutoSize="TextChanges"
+                                    MinimumHeightRequest="96" />
+                        </Border>
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
             </Border>
 
-            <Button Text="Post"
-                    Command="{Binding SubmitCommand}"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                    HeightRequest="50"
-                    CornerRadius="25" />
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                IsVisible="{Binding IsBusy}"
-                                Color="{StaticResource Primary}" />
-
             <Label Text="{Binding ErrorMessage}"
                    TextColor="{StaticResource PlateRed}"
+                   FontSize="13"
                    IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource Primary}" />
+
+            <Button Text="Post"
+                    Command="{Binding SubmitCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 
         </VerticalStackLayout>
     </ScrollView>
