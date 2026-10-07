@@ -12,7 +12,6 @@ public partial class AddEntryViewModel : BaseViewModel
     private readonly IPhotoCaptureService _photoCaptureService;
     private readonly IPlateOcrService _ocrService;
     private readonly IPlateService _plateService;
-    private readonly IStorageService _storageService;
     private readonly IAuthService _authService;
 
     public IReadOnlyList<string> States => UsStates.Codes;
@@ -36,13 +35,11 @@ public partial class AddEntryViewModel : BaseViewModel
         IPhotoCaptureService photoCaptureService,
         IPlateOcrService ocrService,
         IPlateService plateService,
-        IStorageService storageService,
         IAuthService authService)
     {
         _photoCaptureService = photoCaptureService;
         _ocrService = ocrService;
         _plateService = plateService;
-        _storageService = storageService;
         _authService = authService;
     }
 
@@ -114,13 +111,7 @@ public partial class AddEntryViewModel : BaseViewModel
         {
             var plate = await _plateService.GetOrCreatePlateAsync(SelectedState, PlateNumber, user.Uid);
 
-            string? photoUrl = null;
-            if (!string.IsNullOrEmpty(PhotoPath))
-            {
-                photoUrl = await _storageService.TryUploadPlatePhotoAsync(PhotoPath, plate.Id);
-            }
-
-            await _plateService.AddCommentAsync(plate.Id, user, CommentText.Trim(), photoUrl);
+            await _plateService.AddCommentAsync(plate.Id, user, CommentText.Trim());
 
             var state = plate.State;
             var number = plate.PlateNumber;

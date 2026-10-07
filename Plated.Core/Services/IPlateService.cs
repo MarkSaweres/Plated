@@ -10,7 +10,7 @@ public interface IPlateService
 
     Task<IReadOnlyList<PlateComment>> GetCommentsAsync(string plateId);
 
-    Task<PlateComment> AddCommentAsync(string plateId, AppUser author, string text, string? photoUrl);
+    Task<PlateComment> AddCommentAsync(string plateId, AppUser author, string text);
 
     Task ReportCommentAsync(string plateId, string commentId, string reporterUid, ReportReason reason, string? details);
 }

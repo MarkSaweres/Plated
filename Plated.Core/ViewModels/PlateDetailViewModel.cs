@@ -12,8 +12,6 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IPlateService _plateService;
     private readonly IAuthService _authService;
-    private readonly IPhotoCaptureService _photoCaptureService;
-    private readonly IStorageService _storageService;
 
     private string? _plateId;
 
@@ -32,12 +30,6 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     private string newCommentText = string.Empty;
 
     [ObservableProperty]
-    private string? pendingPhotoPath;
-
-    [ObservableProperty]
-    private bool isPhotoSheetOpen;
-
-    [ObservableProperty]
     private bool isReportSheetOpen;
 
     [ObservableProperty]
@@ -48,22 +40,16 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
 
     private PlateComment? _reportTarget;
 
-    public bool IsSheetVisible => IsPhotoSheetOpen || IsReportSheetOpen;
-
-    partial void OnIsPhotoSheetOpenChanged(bool value) => OnPropertyChanged(nameof(IsSheetVisible));
+    public bool IsSheetVisible => IsReportSheetOpen;
 
     partial void OnIsReportSheetOpenChanged(bool value) => OnPropertyChanged(nameof(IsSheetVisible));
 
     public PlateDetailViewModel(
         IPlateService plateService,
-        IAuthService authService,
-        IPhotoCaptureService photoCaptureService,
-        IStorageService storageService)
+        IAuthService authService)
     {
         _plateService = plateService;
         _authService = authService;
-        _photoCaptureService = photoCaptureService;
-        _storageService = storageService;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -115,23 +101,6 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     }
 
     [RelayCommand]
-    private void AttachPhoto() => IsPhotoSheetOpen = true;
-
-    [RelayCommand]
-    private async Task TakePhotoAsync()
-    {
-        IsPhotoSheetOpen = false;
-        PendingPhotoPath = await _photoCaptureService.CapturePhotoAsync() ?? PendingPhotoPath;
-    }
-
-    [RelayCommand]
-    private async Task ChoosePhotoAsync()
-    {
-        IsPhotoSheetOpen = false;
-        PendingPhotoPath = await _photoCaptureService.PickPhotoAsync() ?? PendingPhotoPath;
-    }
-
-    [RelayCommand]
     private async Task AddCommentAsync()
     {
         if (string.IsNullOrWhiteSpace(NewCommentText) || IsBusy)
@@ -152,17 +121,10 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
         {
             _plateId ??= (await _plateService.GetOrCreatePlateAsync(State, PlateNumber, user.Uid)).Id;
 
-            string? photoUrl = null;
-            if (!string.IsNullOrEmpty(PendingPhotoPath))
-            {
-                photoUrl = await _storageService.TryUploadPlatePhotoAsync(PendingPhotoPath, _plateId);
-            }
-
-            var comment = await _plateService.AddCommentAsync(_plateId, user, NewCommentText.Trim(), photoUrl);
+            var comment = await _plateService.AddCommentAsync(_plateId, user, NewCommentText.Trim());
             Comments.Insert(0, comment);
             CommentCount++;
             NewCommentText = string.Empty;
-            PendingPhotoPath = null;
         }
         catch (Exception ex)
         {
@@ -229,7 +191,6 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     [RelayCommand]
     private void CloseSheets()
     {
-        IsPhotoSheetOpen = false;
         IsReportSheetOpen = false;
         _reportTarget = null;
     }

@@ -69,7 +69,7 @@ public class FirestorePlateService : IPlateService
             .ToList();
     }
 
-    public async Task<PlateComment> AddCommentAsync(string plateId, AppUser author, string text, string? photoUrl)
+    public async Task<PlateComment> AddCommentAsync(string plateId, AppUser author, string text)
     {
         // Don't use AddDocumentAsync(object): the plugin reads [FirestoreProperty] attributes off the
         // object's properties, so a Dictionary would be written as an empty document.
@@ -83,7 +83,6 @@ public class FirestorePlateService : IPlateService
             ["authorDisplayName"] = author.DisplayName,
             ["authorPhotoUrl"] = author.PhotoUrl ?? string.Empty,
             ["text"] = text,
-            ["photoUrl"] = photoUrl ?? string.Empty,
             ["createdAt"] = FieldValue.ServerTimestamp(),
             ["reportCount"] = 0,
             ["isHidden"] = false,
@@ -104,7 +103,6 @@ public class FirestorePlateService : IPlateService
             AuthorDisplayName = author.DisplayName,
             AuthorPhotoUrl = author.PhotoUrl,
             Text = text,
-            PhotoUrl = photoUrl,
             CreatedAt = DateTimeOffset.UtcNow,
             ReportCount = 0,
             IsHidden = false,

@@ -57,14 +57,13 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.2.0" />
 
-		<!-- Firebase (Auth, Firestore, Storage). Google Sign-In is implemented natively per
+		<!-- Firebase (Auth, Firestore). Google Sign-In is implemented natively per
 		     platform (see Platforms/*/GoogleSignInService.cs) rather than via
 		     Plugin.Firebase.Auth.Google, which never moved past 3.1.2 and depends on
 		     Plugin.Firebase.Core 3.x types removed in 4.x. -->
 		<PackageReference Include="Plugin.Firebase.Core" Version="4.2.0" />
 		<PackageReference Include="Plugin.Firebase.Auth" Version="5.0.1" />
 		<PackageReference Include="Plugin.Firebase.Firestore" Version="4.0.0" />
-		<PackageReference Include="Plugin.Firebase.Storage" Version="4.0.0" />
 
 		<!-- On-device OCR for reading plates from photos -->
 		<PackageReference Include="Plugin.Maui.OCR" Version="1.1.1" />

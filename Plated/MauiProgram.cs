@@ -54,7 +54,6 @@ public static class MauiProgram
     {
         services.AddSingleton<IAuthService, FirebaseAuthService>();
         services.AddSingleton<IPlateService, FirestorePlateService>();
-        services.AddSingleton<IStorageService, FirebaseStorageService>();
         services.AddSingleton<IPhotoCaptureService, MediaPickerPhotoCaptureService>();
         services.AddSingleton<IPlateOcrService, PlateOcrService>();
         services.AddSingleton<IAppNavigator, AppNavigator>();

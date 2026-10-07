@@ -5,15 +5,15 @@ A cross-platform mobile app for looking up license plates and reading or leaving
 ## Highlights
 
 - **MVVM architecture.** Built with CommunityToolkit.Mvvm and split into a platform-agnostic `Plated.Core` library (models, services, view models) and a thin MAUI app head, so the core logic builds without any mobile workload.
-- **Firebase back end.** Firebase Auth with native Google Sign-In on each platform, Firestore for plates and comments, and Firebase Storage for photos. Security rules limit writes to each user's own data.
+- **Firebase back end.** Firebase Auth with native Google Sign-In on each platform, Firestore for plates and comments. Security rules limit writes to each user's own data.
 - **On-device OCR.** ML Kit on Android and Vision on iOS read a plate number from a photo with no network call, and the result stays editable before posting.
 - **Community moderation.** Signed-in users can report comments, and a comment is hidden automatically after three reports.
 
-**Tech stack:** C#, .NET MAUI, CommunityToolkit.Mvvm, Firebase Auth, Cloud Firestore, Firebase Storage, Google ML Kit, XAML
+**Tech stack:** C#, .NET MAUI, CommunityToolkit.Mvvm, Firebase Auth, Cloud Firestore, Google ML Kit, XAML
 
 ## Project layout
 
-- `Plated.Core` — platform-agnostic library: models, services (auth/Firestore/storage/OCR/photo capture), view models, converters, navigation route constants. Targets plain `net10.0` so it builds without any mobile workload.
+- `Plated.Core` — platform-agnostic library: models, services (auth/Firestore/OCR/photo capture), view models, converters, navigation route constants. Targets plain `net10.0` so it builds without any mobile workload.
 - `Plated` — the MAUI app head (`net10.0-android`, `net10.0-ios`): XAML views, Shell navigation, platform bootstrap (`MainActivity`, `AppDelegate`), resources/branding.
 
 ## One-time setup (required before the app will actually sign in / read or write data)
@@ -25,9 +25,8 @@ A cross-platform mobile app for looking up license plates and reading or leaving
 3. Add an **iOS app** with bundle ID `com.plated.app`. Download **`GoogleService-Info.plist`** and place it at `Plated/Platforms/iOS/GoogleService-Info.plist`.
 4. In **Build > Authentication > Sign-in method**, enable **Google**.
 5. In **Build > Firestore Database**, create a database (start in production mode), then publish the rules in [`firestore.rules`](firestore.rules) (repo root) via the Firebase console's Rules tab or the Firebase CLI (`firebase deploy --only firestore:rules`).
-6. In **Build > Storage**, create a default bucket, then publish [`storage.rules`](storage.rules) the same way.
 
-Both `.rules` files are provided as a starting point: authenticated users can read; writes are restricted to the user's own uid on their fields.
+The rules file is provided as a starting point: authenticated users can read; writes are restricted to the user's own uid on their fields.
 
 ### 2. Wire up Google Sign-In client IDs
 

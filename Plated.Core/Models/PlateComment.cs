@@ -21,9 +21,6 @@ public class PlateComment
     [FirestoreProperty("text")]
     public string Text { get; set; } = string.Empty;
 
-    [FirestoreProperty("photoUrl")]
-    public string? PhotoUrl { get; set; }
-
     [FirestoreProperty("createdAt")]
     public DateTimeOffset CreatedAt { get; set; }
 
