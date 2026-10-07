@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Plated.Core.Models;
 using Plugin.Firebase.Auth;
 using Plugin.Firebase.Firestore;
@@ -61,19 +62,41 @@ public class FirebaseAuthService : IAuthService
         return user;
     }
 
-    private static Task SaveUserProfileAsync(AppUser user)
+    /// <summary>
+    /// Best-effort: the profile document isn't needed to be signed in, and a Firestore write
+    /// waits indefinitely when the database isn't reachable/created, so never let it block login.
+    /// </summary>
+    private static async Task SaveUserProfileAsync(AppUser user)
     {
-        return CrossFirebaseFirestore.Current
-            .GetCollection("users")
-            .GetDocument(user.Uid)
-            .SetDataAsync(new Dictionary<object, object>
+        try
+        {
+            var write = CrossFirebaseFirestore.Current
+                .GetCollection("users")
+                .GetDocument(user.Uid)
+                .SetDataAsync(new Dictionary<object, object>
+                {
+                    ["uid"] = user.Uid,
+                    ["displayName"] = user.DisplayName,
+                    ["email"] = user.Email,
+                    ["photoUrl"] = user.PhotoUrl ?? string.Empty,
+                    ["lastSignInAt"] = FieldValue.ServerTimestamp(),
+                }, SetOptions.Merge());
+
+            var finished = await Task.WhenAny(write, Task.Delay(TimeSpan.FromSeconds(8)));
+            if (finished == write)
             {
-                ["uid"] = user.Uid,
-                ["displayName"] = user.DisplayName,
-                ["email"] = user.Email,
-                ["photoUrl"] = user.PhotoUrl ?? string.Empty,
-                ["lastSignInAt"] = FieldValue.ServerTimestamp(),
-            }, SetOptions.Merge());
+                await write;
+            }
+            else
+            {
+                Debug.WriteLine("[Plated] Saving user profile to Firestore timed out; continuing. " +
+                                "Check that the Firestore database exists and rules are published.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Plated] Saving user profile failed: {ex}");
+        }
     }
 
     public Task SignOutAsync()
