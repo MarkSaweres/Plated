@@ -65,6 +65,10 @@ public partial class LoginViewModel : BaseViewModel
             await action();
             _navigator.ShowMainApp();
         }
+        catch (OperationCanceledException)
+        {
+            // The person closed the sign-in sheet; nothing to report.
+        }
         catch (Exception ex)
         {
             ShowAuthError(ex, failureMessage);

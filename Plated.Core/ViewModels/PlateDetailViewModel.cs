@@ -34,6 +34,26 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     [ObservableProperty]
     private string? pendingPhotoPath;
 
+    [ObservableProperty]
+    private bool isPhotoSheetOpen;
+
+    [ObservableProperty]
+    private bool isReportSheetOpen;
+
+    [ObservableProperty]
+    private bool isReportSent;
+
+    [ObservableProperty]
+    private string? reportError;
+
+    private PlateComment? _reportTarget;
+
+    public bool IsSheetVisible => IsPhotoSheetOpen || IsReportSheetOpen;
+
+    partial void OnIsPhotoSheetOpenChanged(bool value) => OnPropertyChanged(nameof(IsSheetVisible));
+
+    partial void OnIsReportSheetOpenChanged(bool value) => OnPropertyChanged(nameof(IsSheetVisible));
+
     public PlateDetailViewModel(
         IPlateService plateService,
         IAuthService authService,
@@ -95,17 +115,20 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     }
 
     [RelayCommand]
-    private async Task AttachPhotoAsync()
+    private void AttachPhoto() => IsPhotoSheetOpen = true;
+
+    [RelayCommand]
+    private async Task TakePhotoAsync()
     {
-        var choice = await Shell.Current.DisplayActionSheetAsync("Add a photo", "Cancel", null, "Take Photo", "Choose from Gallery");
-        if (choice == "Take Photo")
-        {
-            PendingPhotoPath = await _photoCaptureService.CapturePhotoAsync();
-        }
-        else if (choice == "Choose from Gallery")
-        {
-            PendingPhotoPath = await _photoCaptureService.PickPhotoAsync();
-        }
+        IsPhotoSheetOpen = false;
+        PendingPhotoPath = await _photoCaptureService.CapturePhotoAsync() ?? PendingPhotoPath;
+    }
+
+    [RelayCommand]
+    private async Task ChoosePhotoAsync()
+    {
+        IsPhotoSheetOpen = false;
+        PendingPhotoPath = await _photoCaptureService.PickPhotoAsync() ?? PendingPhotoPath;
     }
 
     [RelayCommand]
@@ -152,48 +175,62 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     }
 
     [RelayCommand]
-    private async Task ReportCommentAsync(PlateComment? comment)
+    private void ReportComment(PlateComment? comment)
     {
         if (comment is null || _plateId is null)
         {
             return;
         }
 
+        _reportTarget = comment;
+        IsReportSent = false;
+        ReportError = null;
+        IsReportSheetOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task SubmitReportAsync(string? reasonKey)
+    {
         var user = _authService.CurrentUser;
-        if (user is null)
+        if (_reportTarget is null || _plateId is null || user is null || IsBusy)
         {
             return;
         }
 
-        var reasonChoice = await Shell.Current.DisplayActionSheetAsync(
-            "Report this comment", "Cancel", null, "Spam", "Harassment", "Inaccurate", "Other");
-
-        if (reasonChoice is null || reasonChoice == "Cancel")
+        var reason = reasonKey switch
         {
-            return;
-        }
-
-        var reason = reasonChoice switch
-        {
-            "Spam" => ReportReason.Spam,
-            "Harassment" => ReportReason.Harassment,
-            "Inaccurate" => ReportReason.Inaccurate,
+            "spam" => ReportReason.Spam,
+            "harassment" => ReportReason.Harassment,
+            "inaccurate" => ReportReason.Inaccurate,
             _ => ReportReason.Other,
         };
 
+        IsBusy = true;
+        ReportError = null;
         try
         {
-            await _plateService.ReportCommentAsync(_plateId, comment.Id, user.Uid, reason, null);
-            await Shell.Current.DisplayAlertAsync("Thanks", "This comment has been reported.", "OK");
+            await _plateService.ReportCommentAsync(_plateId, _reportTarget.Id, user.Uid, reason, null);
+            IsReportSent = true;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[Plated] Report failed: {ex}");
-            var detail = "Couldn't submit the report. Please try again.";
+            ReportError = "Couldn't submit the report. Please try again.";
 #if DEBUG
-            detail += $" ({ex.Message})";
+            ReportError += $" ({ex.Message})";
 #endif
-            await Shell.Current.DisplayAlertAsync("Error", detail, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CloseSheets()
+    {
+        IsPhotoSheetOpen = false;
+        IsReportSheetOpen = false;
+        _reportTarget = null;
     }
 }

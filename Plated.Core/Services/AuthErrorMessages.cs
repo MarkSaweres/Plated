@@ -8,6 +8,11 @@ public static class AuthErrorMessages
     /// <summary>Returns a friendly message, or null if the error isn't one we recognize.</summary>
     public static string? TryDescribe(Exception ex)
     {
+        if (ex is GoogleSignInException)
+        {
+            return ex.Message;
+        }
+
         if (ex is CrossPlatformFirebaseAuthException authException)
         {
             // Firebase's email-enumeration protection reports a wrong password and an unknown

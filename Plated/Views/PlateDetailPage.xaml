@@ -142,5 +142,142 @@
             </VerticalStackLayout>
         </VerticalStackLayout>
 
+        <!-- Dim backdrop -->
+        <BoxView Grid.RowSpan="3"
+                 Color="Black"
+                 Opacity="0.45"
+                 IsVisible="{Binding IsSheetVisible}">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseSheetsCommand}" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Report sheet -->
+        <Border Grid.RowSpan="3"
+                VerticalOptions="End"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28,28,0,0"
+                Padding="20,12,20,24"
+                IsVisible="{Binding IsReportSheetOpen}">
+            <VerticalStackLayout Spacing="4">
+                <BoxView WidthRequest="40" HeightRequest="4" CornerRadius="2" Color="{StaticResource Gray300}" HorizontalOptions="Center" Margin="0,0,0,12" />
+
+                <VerticalStackLayout Spacing="4" IsVisible="{Binding IsReportSent, Converter={StaticResource InverseBooleanConverter}}">
+                    <Label Text="Report this comment" FontFamily="OpenSansSemibold" FontSize="20" TextColor="{StaticResource Ink}" />
+                    <Label Text="Why are you reporting it? Comments reported by several people are hidden automatically."
+                           Style="{StaticResource Subtle}" FontSize="13" Margin="0,0,0,8" />
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE160;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Spam" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Ads, links, or repeated posts" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SubmitReportCommand}" CommandParameter="spam" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE002;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Harassment" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Abusive, hateful, or threatening" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SubmitReportCommand}" CommandParameter="harassment" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE88E;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Inaccurate" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Wrong plate or false information" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SubmitReportCommand}" CommandParameter="inaccurate" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE5D3;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Something else" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Anything that doesn't belong here" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SubmitReportCommand}" CommandParameter="other" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                    <Label Text="{Binding ReportError}"
+                           TextColor="{StaticResource PlateRed}"
+                           FontSize="13"
+                           IsVisible="{Binding ReportError, Converter={StaticResource StringNotEmptyConverter}}" />
+                    <Button Text="Cancel" Style="{StaticResource SecondaryButton}" Command="{Binding CloseSheetsCommand}" Margin="0,8,0,0" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8" Padding="0,8,0,0" IsVisible="{Binding IsReportSent}">
+                    <Border WidthRequest="64" HeightRequest="64" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 32" BackgroundColor="{StaticResource AccentSoft}" HorizontalOptions="Center">
+                        <Label Style="{StaticResource IconGlyph}" Text="&#xE86C;" FontSize="34" TextColor="{StaticResource Accent}" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="Thanks for letting us know" FontFamily="OpenSansSemibold" FontSize="20" TextColor="{StaticResource Ink}" HorizontalOptions="Center" />
+                    <Label Text="We'll take a look. Reports help keep Plated respectful."
+                           Style="{StaticResource Subtle}" HorizontalTextAlignment="Center" Margin="0,0,0,8" />
+                    <Button Text="Done" Command="{Binding CloseSheetsCommand}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Photo sheet -->
+        <Border Grid.RowSpan="3"
+                VerticalOptions="End"
+                BackgroundColor="{StaticResource White}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28,28,0,0"
+                Padding="20,12,20,24"
+                IsVisible="{Binding IsPhotoSheetOpen}">
+            <VerticalStackLayout Spacing="4">
+                <BoxView WidthRequest="40" HeightRequest="4" CornerRadius="2" Color="{StaticResource Gray300}" HorizontalOptions="Center" Margin="0,0,0,12" />
+                <Label Text="Add a photo" FontFamily="OpenSansSemibold" FontSize="20" TextColor="{StaticResource Ink}" Margin="0,0,0,8" />
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE439;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Take a photo" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Use the camera" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding TakePhotoCommand}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="4,10">
+                                <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" Padding="0" StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Field}">
+                                    <Label Style="{StaticResource IconGlyph}" Text="&#xE3B6;" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Choose from gallery" FontFamily="OpenSansSemibold" FontSize="16" TextColor="{StaticResource Ink}" />
+                                    <Label Text="Pick an existing photo" Style="{StaticResource Subtle}" FontSize="13" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Style="{StaticResource IconGlyph}" Text="&#xE5CC;" TextColor="{StaticResource Gray300}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChoosePhotoCommand}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                <Button Text="Cancel" Style="{StaticResource SecondaryButton}" Command="{Binding CloseSheetsCommand}" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+        </Border>
+
     </Grid>
 </ContentPage>

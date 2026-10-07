@@ -1,64 +1,117 @@
-using Android.App;
-using Android.Content;
-using Android.Gms.Auth.Api.Identity;
-using Android.Gms.Extensions;
+using Android.OS;
+using AndroidX.Core.Content;
+using AndroidX.Credentials;
 using Firebase.Auth;
+using Google.Android.Libraries.Identity.GoogleId;
 using Microsoft.Maui.ApplicationModel;
 using Plated.Core.Services;
 
 namespace Plated.Services;
 
 /// <summary>
-/// Native Android Google sign-in via Play Services Identity (One Tap), exchanged for a
-/// Firebase session. Google marks <see cref="ISignInClient.BeginSignIn"/> obsolete in favor
-/// of Credential Manager, but it remains functional and is still the simplest reliable path
-/// that doesn't require the newer androidx.credentials stack.
+/// Native Android Google sign-in via Credential Manager ("Sign in with Google"), exchanged for a
+/// Firebase session with <c>FirebaseAuth.Instance.SignInWithCredentialAsync</c>.
 /// </summary>
 public class GoogleSignInService : IGoogleSignInService
 {
-    private const int RequestCode = 9002;
+    // Bundle key used by GoogleIdTokenCredential; the binding doesn't expose its createFrom helper.
+    private const string IdTokenBundleKey = "com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN";
 
-    private TaskCompletionSource<Intent?>? _pendingSignIn;
-
-#pragma warning disable CS0618 // BeginSignInRequest and its members are deprecated by Google in favor of Credential Manager; still functional.
     public async Task SignInAsync()
     {
         var activity = Platform.CurrentActivity
-            ?? throw new InvalidOperationException("No current Android activity.");
+            ?? throw new GoogleSignInException("Couldn't start Google sign-in. Please try again.");
 
-        var signInClient = Identity.GetSignInClient(activity);
-
-        var idTokenOptions = BeginSignInRequest.GoogleIdTokenRequestOptions.InvokeBuilder()
-            .SetSupported(true)
-            .SetServerClientId(AppConfig.GoogleWebClientId)
-            .SetFilterByAuthorizedAccounts(false)
+        var googleOption = new GetSignInWithGoogleOption.Builder(AppConfig.GoogleWebClientId).Build();
+        var request = new GetCredentialRequest.Builder()
+            .AddCredentialOption(googleOption)
             .Build();
 
-        var request = BeginSignInRequest.InvokeBuilder()
-            .SetGoogleIdTokenRequestOptions(idTokenOptions)
-            .Build();
+        var callback = new GoogleCredentialCallback();
+        CredentialManager.Create(activity).GetCredentialAsync(
+            activity, request, null, ContextCompat.GetMainExecutor(activity)!, callback);
 
-        var beginSignInResult = await signInClient.BeginSignIn(request).AsAsync<BeginSignInResult>();
+        var response = await callback.Result;
+        var credential = response.Credential;
 
-        _pendingSignIn = new TaskCompletionSource<Intent?>();
-        activity.StartIntentSenderForResult(beginSignInResult.PendingIntent.IntentSender, RequestCode, null, 0, 0, 0);
-        var data = await _pendingSignIn.Task;
+        var isGoogleCredential = credential.Type == GoogleIdTokenCredential.TypeGoogleIdTokenCredential
+            || credential.Type == GoogleIdTokenCredential.TypeGoogleIdTokenSiwgCredential;
+        if (!isGoogleCredential)
+        {
+            throw new GoogleSignInException(
+                "Google sign-in returned an unexpected result. Please try again.", $"Credential type: {credential.Type}");
+        }
 
-        var credential = signInClient.GetSignInCredentialFromIntent(data);
-
-        var idToken = credential.GoogleIdToken
-            ?? throw new InvalidOperationException("Google sign-in did not return an ID token.");
+        var idToken = ReadIdToken(credential.Data)
+            ?? throw new GoogleSignInException("Google sign-in didn't return a token. Please try again.");
 
         var firebaseCredential = GoogleAuthProvider.GetCredential(idToken, null);
         await FirebaseAuth.Instance.SignInWithCredentialAsync(firebaseCredential);
     }
-#pragma warning restore CS0618
 
-    public void HandleActivityResult(int requestCode, Result resultCode, Intent? data)
+    private static string? ReadIdToken(Bundle data)
     {
-        if (requestCode == RequestCode)
+        var token = data.GetString(IdTokenBundleKey);
+        if (!string.IsNullOrEmpty(token))
         {
-            _pendingSignIn?.TrySetResult(data);
+            return token;
+        }
+
+        // Fall back to scanning for the key in case the constant changes between library versions.
+        foreach (var key in data.KeySet() ?? [])
+        {
+            if (key.EndsWith("ID_TOKEN", StringComparison.Ordinal))
+            {
+                token = data.GetString(key);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    return token;
+                }
+            }
+        }
+
+        return null;
+    }
+}
+
+/// <summary>Bridges Credential Manager's Java callback to a Task.</summary>
+internal sealed class GoogleCredentialCallback : Java.Lang.Object, ICredentialManagerCallback
+{
+    private readonly TaskCompletionSource<GetCredentialResponse> _completion = new();
+
+    public Task<GetCredentialResponse> Result => _completion.Task;
+
+    public void OnResult(Java.Lang.Object? result)
+    {
+        if (result is GetCredentialResponse response)
+        {
+            _completion.TrySetResult(response);
+        }
+        else
+        {
+            _completion.TrySetException(new GoogleSignInException(
+                "Google sign-in returned an unexpected result. Please try again.", result?.ToString()));
+        }
+    }
+
+    public void OnError(Java.Lang.Object e)
+    {
+        var className = e.Class.Name ?? string.Empty;
+        var details = e.ToString();
+
+        if (className.EndsWith("GetCredentialCancellationException", StringComparison.Ordinal))
+        {
+            _completion.TrySetCanceled();
+        }
+        else if (className.EndsWith("NoCredentialException", StringComparison.Ordinal))
+        {
+            _completion.TrySetException(new GoogleSignInException(
+                "No Google account was found on this device. Add one in Settings, or sign in with email.", details));
+        }
+        else
+        {
+            _completion.TrySetException(new GoogleSignInException(
+                "Google sign-in isn't available right now. Try signing in with email.", details));
         }
     }
 }

@@ -60,10 +60,7 @@ public static class MauiProgram
         services.AddSingleton<IAppNavigator, AppNavigator>();
 
 #if ANDROID
-        // Registered as itself too so MainActivity.OnActivityResult can resolve the same
-        // singleton instance to forward the sign-in flow's result.
-        services.AddSingleton<GoogleSignInService>();
-        services.AddSingleton<IGoogleSignInService>(sp => sp.GetRequiredService<GoogleSignInService>());
+        services.AddSingleton<IGoogleSignInService, GoogleSignInService>();
 #elif IOS
         services.AddSingleton<IGoogleSignInService, GoogleSignInService>();
 #endif

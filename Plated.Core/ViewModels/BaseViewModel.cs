@@ -37,6 +37,10 @@ public partial class BaseViewModel : ObservableObject
         }
 
         Debug.WriteLine($"[Plated] Auth failed: {ex}");
+#if DEBUG
+        ErrorMessage = ex is GoogleSignInException { Details: { } details } ? $"{friendly} ({details})" : friendly;
+#else
         ErrorMessage = friendly;
+#endif
     }
 }
