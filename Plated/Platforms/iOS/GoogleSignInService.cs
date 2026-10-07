@@ -24,7 +24,17 @@ public class GoogleSignInService : IGoogleSignInService
 
             if (e.Error is not null)
             {
-                tcs.TrySetException(new InvalidOperationException(e.Error.LocalizedDescription));
+                // -5 is kGIDSignInErrorCodeCanceled: the user closed the Google sheet.
+                if (e.Error.Code == -5)
+                {
+                    tcs.TrySetCanceled();
+                }
+                else
+                {
+                    tcs.TrySetException(new GoogleSignInException(
+                        "Google sign-in isn't available right now. Try signing in with email.", e.Error.LocalizedDescription));
+                }
+
                 return;
             }
 
