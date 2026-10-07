@@ -33,7 +33,37 @@ public class FirebaseAuthService : IAuthService
         var user = ToAppUser(CrossFirebaseAuth.Current.CurrentUser)
             ?? throw new InvalidOperationException("Google sign-in completed but no Firebase user is signed in.");
 
-        await CrossFirebaseFirestore.Current
+        await SaveUserProfileAsync(user);
+        return user;
+    }
+
+    public async Task<AppUser> SignInWithEmailAsync(string email, string password)
+    {
+        var firebaseUser = await CrossFirebaseAuth.Current.SignInWithEmailAndPasswordAsync(
+            email.Trim(), password, createsUserAutomatically: false);
+
+        var user = ToAppUser(firebaseUser)!;
+        await SaveUserProfileAsync(user);
+        return user;
+    }
+
+    public async Task<AppUser> CreateAccountWithEmailAsync(string email, string password)
+    {
+        var trimmedEmail = email.Trim();
+        var firebaseUser = await CrossFirebaseAuth.Current.CreateUserAsync(trimmedEmail, password);
+
+        // Email accounts have no display name; default to the part before the @.
+        await firebaseUser.UpdateProfileAsync(displayName: trimmedEmail.Split('@')[0]);
+        await CrossFirebaseAuth.Current.ReloadCurrentUserAsync();
+
+        var user = ToAppUser(CrossFirebaseAuth.Current.CurrentUser)!;
+        await SaveUserProfileAsync(user);
+        return user;
+    }
+
+    private static Task SaveUserProfileAsync(AppUser user)
+    {
+        return CrossFirebaseFirestore.Current
             .GetCollection("users")
             .GetDocument(user.Uid)
             .SetDataAsync(new Dictionary<object, object>
@@ -44,8 +74,6 @@ public class FirebaseAuthService : IAuthService
                 ["photoUrl"] = user.PhotoUrl ?? string.Empty,
                 ["lastSignInAt"] = FieldValue.ServerTimestamp(),
             }, SetOptions.Merge());
-
-        return user;
     }
 
     public Task SignOutAsync()

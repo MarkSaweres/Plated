@@ -10,5 +10,9 @@ public interface IAuthService
 
     Task<AppUser> SignInWithGoogleAsync();
 
+    Task<AppUser> SignInWithEmailAsync(string email, string password);
+
+    Task<AppUser> CreateAccountWithEmailAsync(string email, string password);
+
     Task SignOutAsync();
 }
