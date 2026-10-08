@@ -18,26 +18,6 @@ public class PlateOcrService : IPlateOcrService
         var imageBytes = await File.ReadAllBytesAsync(imageFilePath);
         var result = await _ocrService.RecognizeTextAsync(imageBytes, tryHard: true);
 
-        return result.Success ? ExtractPlateCandidate(result) : null;
+        return result.Success ? PlateTextParser.Pick(result.Lines) : null;
     }
-
-    private static string? ExtractPlateCandidate(OcrResult result)
-    {
-        var candidates = result.Lines
-            .Select(Normalize)
-            .Where(line => line.Length is >= 4 and <= 8)
-            .OrderByDescending(line => line.Length)
-            .ToList();
-
-        if (candidates.Count > 0)
-        {
-            return candidates[0];
-        }
-
-        var fallback = Normalize(result.AllText);
-        return fallback.Length > 0 ? fallback : null;
-    }
-
-    private static string Normalize(string text)
-        => new string(text.Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
 }

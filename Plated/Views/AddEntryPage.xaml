@@ -65,6 +65,11 @@
                 <Label Text="Reading the plate..." Style="{StaticResource Subtle}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
+            <Label Text="{Binding ScanMessage}"
+                   Style="{StaticResource Subtle}"
+                   TextColor="{StaticResource Accent}"
+                   IsVisible="{Binding ScanMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
             <Border Style="{StaticResource CardBorder}" Padding="18">
                 <VerticalStackLayout Spacing="16">
 

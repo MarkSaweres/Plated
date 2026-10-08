@@ -31,6 +31,9 @@ public partial class AddEntryViewModel : BaseViewModel
     [ObservableProperty]
     private bool isScanning;
 
+    [ObservableProperty]
+    private string? scanMessage;
+
     public AddEntryViewModel(
         IPhotoCaptureService photoCaptureService,
         IPlateOcrService ocrService,
@@ -72,17 +75,27 @@ public partial class AddEntryViewModel : BaseViewModel
     private async Task RunOcrAsync(string path)
     {
         IsScanning = true;
+        ScanMessage = null;
         try
         {
             var recognized = await _ocrService.RecognizePlateNumberAsync(path);
-            if (!string.IsNullOrEmpty(recognized))
+            if (string.IsNullOrEmpty(recognized))
+            {
+                ScanMessage = "We couldn't read a plate in that photo. Try a closer, straighter shot, or type it below.";
+            }
+            else
             {
                 PlateNumber = recognized;
+                ScanMessage = $"Read \"{recognized}\". Double-check it before posting.";
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Best-effort: the user can still type the plate manually.
+            ScanMessage = "We couldn't scan that photo. You can type the plate number below.";
+#if DEBUG
+            ScanMessage += $" ({ex.Message})";
+#endif
+            System.Diagnostics.Debug.WriteLine($"[Plated] OCR failed: {ex}");
         }
         finally
         {
