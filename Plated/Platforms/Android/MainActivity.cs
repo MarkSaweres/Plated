@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.OS;
 using Microsoft.Maui.ApplicationModel;
 using Plugin.Firebase.Core.Platforms.Android;
+using Plugin.MauiMtAdmob;
 
 namespace Plated;
 
@@ -13,5 +14,6 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         CrossFirebase.Initialize(this, () => Platform.CurrentActivity!);
+        CrossMauiMTAdmob.Current.Init(this, AdConfig.AppId);
     }
 }

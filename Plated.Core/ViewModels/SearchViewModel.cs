@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using Plated.Core.Models;
 using Plated.Core.Navigation;
+using Plated.Core.Services;
 
 namespace Plated.Core.ViewModels;
 
@@ -19,6 +20,13 @@ public partial class SearchViewModel : BaseViewModel
     [ObservableProperty]
     private bool hasSearched;
 
+    private readonly IInterstitialAdService _interstitialAds;
+
+    public SearchViewModel(IInterstitialAdService interstitialAds)
+    {
+        _interstitialAds = interstitialAds;
+    }
+
     [RelayCommand]
     private async Task SearchAsync()
     {
@@ -32,6 +40,10 @@ public partial class SearchViewModel : BaseViewModel
         try
         {
             HasSearched = true;
+
+            // Full-screen ad first (no-op when ads are removed or none is ready), then the results.
+            await _interstitialAds.ShowIfReadyAsync();
+
             await Shell.Current.GoToAsync(
                 $"{Routes.PlateDetail}?{Routes.StateQueryKey}={SelectedState}&{Routes.PlateNumberQueryKey}={Uri.EscapeDataString(PlateNumber)}");
         }

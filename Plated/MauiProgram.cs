@@ -61,6 +61,7 @@ public static class MauiProgram
         services.AddSingleton<IAppNavigator, AppNavigator>();
         services.AddSingleton<AdsState>();
         services.AddSingleton<IPurchaseService, StorePurchaseService>();
+        services.AddSingleton<IInterstitialAdService, InterstitialAdService>();
 
 #if ANDROID
         services.AddSingleton<IGoogleSignInService, GoogleSignInService>();
