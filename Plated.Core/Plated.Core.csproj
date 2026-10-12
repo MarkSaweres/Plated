@@ -23,6 +23,9 @@
 
     <!-- On-device OCR for reading plates from photos -->
     <PackageReference Include="Plugin.Maui.OCR" Version="1.1.1" />
+
+    <!-- One-time "Remove ads" purchase (Google Play Billing / StoreKit) -->
+    <PackageReference Include="Plugin.InAppBilling" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

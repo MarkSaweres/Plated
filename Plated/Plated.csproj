@@ -65,6 +65,10 @@
 		<PackageReference Include="Plugin.Firebase.Auth" Version="5.0.1" />
 		<PackageReference Include="Plugin.Firebase.Firestore" Version="4.0.0" />
 
+		<!-- Banner ads (Google AdMob) and the one-time "Remove ads" purchase -->
+		<PackageReference Include="Plugin.MauiMTAdmob" Version="2.5.0" />
+		<PackageReference Include="Plugin.InAppBilling" Version="10.0.0" />
+
 		<!-- On-device OCR for reading plates from photos -->
 		<PackageReference Include="Plugin.Maui.OCR" Version="1.1.1" />
 	</ItemGroup>

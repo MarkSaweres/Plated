@@ -3,10 +3,12 @@
     x:Class="Plated.Views.SearchPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Plated.Controls"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:SearchViewModel"
     Shell.NavBarIsVisible="False">
 
+    <Grid RowDefinitions="*,Auto">
     <ScrollView>
         <VerticalStackLayout Padding="24,20,24,32" Spacing="22">
 
@@ -62,4 +64,6 @@
 
         </VerticalStackLayout>
     </ScrollView>
+    <controls:AdBanner Grid.Row="1" Margin="0,0,0,6" />
+    </Grid>
 </ContentPage>

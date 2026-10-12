@@ -3,10 +3,12 @@
     x:Class="Plated.Views.ProfilePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Plated.Controls"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:ProfileViewModel"
     Shell.NavBarIsVisible="False">
 
+    <Grid RowDefinitions="*,Auto">
     <ScrollView>
         <VerticalStackLayout Padding="24,20,24,32" Spacing="22">
 
@@ -45,6 +47,52 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Upgrade card: shown while ads are on -->
+            <Border Style="{StaticResource CardBorder}" Padding="20" IsVisible="{Binding AdsState.ShowAds}">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Grid.Column="0" WidthRequest="44" HeightRequest="44" Padding="0" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 22" BackgroundColor="{StaticResource AccentSoft}">
+                            <Label Style="{StaticResource IconGlyph}" Text="&#xE8E8;" FontSize="22"
+                                   TextColor="{StaticResource Accent}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Go ad-free" FontFamily="OpenSansSemibold" FontSize="18" TextColor="{StaticResource Ink}" />
+                            <Label Text="One payment, no subscription. Yours on every device signed in to your store account."
+                                   Style="{StaticResource Subtle}" FontSize="13" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Button Text="Remove ads"
+                            Command="{Binding RemoveAdsCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+                    <Label Text="{Binding RemoveAdsPrice, StringFormat='One-time purchase: {0}'}"
+                           Style="{StaticResource Subtle}" FontSize="12" HorizontalOptions="Center"
+                           IsVisible="{Binding RemoveAdsPrice, Converter={StaticResource StringNotEmptyConverter}}" />
+                    <Button Text="Restore purchase"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding RestorePurchasesCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Thank-you card: shown once ads are removed -->
+            <Border Style="{StaticResource CardBorder}" Padding="20" IsVisible="{Binding AdsState.AdsRemoved}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Label Grid.Column="0" Style="{StaticResource IconGlyph}" Text="&#xE86C;" FontSize="28"
+                           TextColor="{StaticResource Accent}" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="Ads removed" FontFamily="OpenSansSemibold" FontSize="18" TextColor="{StaticResource Ink}" />
+                        <Label Text="Thanks for supporting Plated." Style="{StaticResource Subtle}" FontSize="13" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Label Text="{Binding PurchaseMessage}"
+                   Style="{StaticResource Subtle}"
+                   TextColor="{StaticResource Accent}"
+                   HorizontalTextAlignment="Center"
+                   IsVisible="{Binding PurchaseMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
             <Label Text="{Binding ErrorMessage}"
                    TextColor="{StaticResource PlateRed}"
                    FontSize="13"
@@ -66,4 +114,6 @@
 
         </VerticalStackLayout>
     </ScrollView>
+    <controls:AdBanner Grid.Row="1" Margin="0,0,0,6" />
+    </Grid>
 </ContentPage>

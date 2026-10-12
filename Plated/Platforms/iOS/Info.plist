@@ -28,6 +28,11 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<!-- AdMob app ID. This is Google's TEST ID; replace with yours from admob.google.com before release. -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>GADIsAdManagerApp</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Plated uses the camera to photograph license plates so it can read and save the plate number.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

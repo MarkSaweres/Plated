@@ -8,8 +8,9 @@ public partial class App : Application
 {
     private readonly IAuthService _authService;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IPurchaseService _purchaseService;
 
-    public App(IAuthService authService, IServiceProvider serviceProvider)
+    public App(IAuthService authService, IServiceProvider serviceProvider, IPurchaseService purchaseService)
     {
         InitializeComponent();
 
@@ -17,6 +18,7 @@ public partial class App : Application
         UserAppTheme = Microsoft.Maui.ApplicationModel.AppTheme.Light;
         _authService = authService;
         _serviceProvider = serviceProvider;
+        _purchaseService = purchaseService;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -25,6 +27,10 @@ public partial class App : Application
             ? _serviceProvider.GetRequiredService<AppShell>()
             : new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
 
-        return new Window(rootPage);
+        var window = new Window(rootPage);
+
+        // Pick up an existing "Remove ads" purchase (reinstall, new phone) once the activity is up.
+        window.Created += (_, _) => _ = _purchaseService.RefreshAsync();
+        return window;
     }
 }

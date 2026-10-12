@@ -8,6 +8,7 @@ using Plated.Core.ViewModels;
 using Plated.Services;
 using Plated.Views;
 using Plugin.Maui.OCR;
+using Plugin.MauiMtAdmob;
 
 namespace Plated;
 
@@ -20,6 +21,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
             .UseOcr()
+            .UseMauiMTAdmob()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -57,6 +59,8 @@ public static class MauiProgram
         services.AddSingleton<IPhotoCaptureService, MediaPickerPhotoCaptureService>();
         services.AddSingleton<IPlateOcrService, PlateOcrService>();
         services.AddSingleton<IAppNavigator, AppNavigator>();
+        services.AddSingleton<AdsState>();
+        services.AddSingleton<IPurchaseService, StorePurchaseService>();
 
 #if ANDROID
         services.AddSingleton<IGoogleSignInService, GoogleSignInService>();
