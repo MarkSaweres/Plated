@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="Plated.Views.VerifyEmailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
+    x:DataType="vm:VerifyEmailViewModel"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,32" Spacing="22" VerticalOptions="Center">
+
+            <Border WidthRequest="88"
+                    HeightRequest="88"
+                    Padding="0"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 44"
+                    BackgroundColor="{StaticResource AccentSoft}"
+                    HorizontalOptions="Center">
+                <Label Style="{StaticResource IconGlyph}"
+                       Text="&#xE158;"
+                       FontSize="40"
+                       TextColor="{StaticResource Accent}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Check your email"
+                       Style="{StaticResource ScreenTitle}"
+                       HorizontalOptions="Center" />
+                <Label Style="{StaticResource Subtle}" HorizontalTextAlignment="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="We sent a verification link to " />
+                            <Span Text="{Binding Email}" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            <Span Text=". Tap it, then come back here. It can take a minute, and may land in spam." />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource CardBorder}" Padding="18">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="{Binding StatusMessage}"
+                           TextColor="{StaticResource Accent}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="{StaticResource PlateRed}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="{StaticResource Primary}" />
+
+                    <Button Text="I've verified my email"
+                            Command="{Binding CheckCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+
+                    <Button Text="{Binding ResendText}"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ResendCommand}"
+                            IsEnabled="{Binding CanResend}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Use a different account"
+                    Style="{StaticResource SecondaryButton}"
+                    BackgroundColor="Transparent"
+                    BorderWidth="0"
+                    Command="{Binding SignOutCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

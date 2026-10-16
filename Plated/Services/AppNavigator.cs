@@ -25,6 +25,11 @@ public class AppNavigator : IAppNavigator
         Application.Current!.Windows[0].Page = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
     }
 
+    public void ShowVerifyEmail()
+    {
+        Application.Current!.Windows[0].Page = new NavigationPage(_serviceProvider.GetRequiredService<VerifyEmailPage>());
+    }
+
     public Task ShowCreateAccountAsync()
         => RootPage.Navigation.PushAsync(_serviceProvider.GetRequiredService<CreateAccountPage>());
 

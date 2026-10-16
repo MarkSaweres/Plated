@@ -3,6 +3,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Signed in, with an email address the person has confirmed (Google accounts count as confirmed).
+    // Checked here, not just in the app, so a script that talks to Firebase directly can't skip it.
+    function isVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
     match /users/{uid} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
@@ -10,17 +16,17 @@ service cloud.firestore {
 
     match /plates/{plateId} {
       allow read: if request.auth != null;
-      allow create, update: if request.auth != null;
+      allow create, update: if isVerified();
 
       match /comments/{commentId} {
         allow read: if request.auth != null;
-        allow create: if request.auth != null
+        allow create: if isVerified()
           && request.resource.data.authorUid == request.auth.uid;
-        allow update: if request.auth != null;
+        allow update: if isVerified();
 
         match /reports/{reportId} {
           allow read: if false;
-          allow create: if request.auth != null
+          allow create: if isVerified()
             && request.resource.data.reporterUid == request.auth.uid;
         }
       }

@@ -62,7 +62,18 @@ public partial class CreateAccountViewModel : BaseViewModel
         try
         {
             await _authService.CreateAccountWithEmailAsync(FirstName, LastName, Email, Password);
-            _navigator.ShowMainApp();
+
+            try
+            {
+                await _authService.SendEmailVerificationAsync();
+            }
+            catch (Exception ex)
+            {
+                // The verify screen has a Resend button, so don't fail account creation over this.
+                System.Diagnostics.Debug.WriteLine($"[Plated] Sending verification email failed: {ex.Message}");
+            }
+
+            _navigator.ShowVerifyEmail();
         }
         catch (Exception ex)
         {

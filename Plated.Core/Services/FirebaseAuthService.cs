@@ -110,6 +110,38 @@ public class FirebaseAuthService : IAuthService
         }
     }
 
+    public async Task SendEmailVerificationAsync()
+    {
+        var firebaseUser = CrossFirebaseAuth.Current.CurrentUser
+            ?? throw new InvalidOperationException("No user is signed in.");
+        await firebaseUser.SendEmailVerificationAsync();
+    }
+
+    public async Task<bool> RefreshEmailVerificationAsync()
+    {
+        if (CrossFirebaseAuth.Current.CurrentUser is null)
+        {
+            return false;
+        }
+
+        await CrossFirebaseAuth.Current.ReloadCurrentUserAsync();
+
+        var firebaseUser = CrossFirebaseAuth.Current.CurrentUser;
+        if (firebaseUser is null)
+        {
+            return false;
+        }
+
+        if (firebaseUser.IsEmailVerified)
+        {
+            // The email_verified flag lives in the ID token that Firestore rules read; force a new one.
+            await firebaseUser.GetIdTokenResultAsync(true);
+        }
+
+        CurrentUser = ToAppUser(firebaseUser);
+        return firebaseUser.IsEmailVerified;
+    }
+
     public Task SignOutAsync()
     {
         return CrossFirebaseAuth.Current.SignOutAsync();
@@ -128,6 +160,7 @@ public class FirebaseAuthService : IAuthService
             DisplayName = firebaseUser.DisplayName ?? "Anonymous",
             Email = firebaseUser.Email ?? string.Empty,
             PhotoUrl = firebaseUser.PhotoUrl,
+            IsEmailVerified = firebaseUser.IsEmailVerified,
         };
     }
 }

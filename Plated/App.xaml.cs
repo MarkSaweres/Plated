@@ -23,9 +23,12 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        Page rootPage = _authService.CurrentUser is not null
-            ? _serviceProvider.GetRequiredService<AppShell>()
-            : new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
+        Page rootPage = _authService.CurrentUser switch
+        {
+            null => new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>()),
+            { IsEmailVerified: false } => new NavigationPage(_serviceProvider.GetRequiredService<VerifyEmailPage>()),
+            _ => _serviceProvider.GetRequiredService<AppShell>(),
+        };
 
         var window = new Window(rootPage);
 

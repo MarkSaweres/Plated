@@ -15,4 +15,7 @@ public class AppUser
 
     [FirestoreProperty("photoUrl")]
     public string? PhotoUrl { get; set; }
+
+    /// <summary>True once the person has confirmed their email (always true for Google accounts).</summary>
+    public bool IsEmailVerified { get; set; }
 }

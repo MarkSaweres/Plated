@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plated.Core.Models;
 using Plated.Core.Navigation;
 using Plated.Core.Services;
 
@@ -51,7 +52,7 @@ public partial class LoginViewModel : BaseViewModel
         return _navigator.ShowCreateAccountAsync();
     }
 
-    private async Task RunAuthAsync(Func<Task> action, string failureMessage)
+    private async Task RunAuthAsync(Func<Task<AppUser>> action, string failureMessage)
     {
         if (IsBusy)
         {
@@ -62,8 +63,15 @@ public partial class LoginViewModel : BaseViewModel
         ErrorMessage = null;
         try
         {
-            await action();
-            _navigator.ShowMainApp();
+            var user = await action();
+            if (user.IsEmailVerified)
+            {
+                _navigator.ShowMainApp();
+            }
+            else
+            {
+                _navigator.ShowVerifyEmail();
+            }
         }
         catch (OperationCanceledException)
         {

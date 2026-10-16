@@ -6,6 +6,8 @@ public interface IAppNavigator
 
     void ShowLogin();
 
+    void ShowVerifyEmail();
+
     Task ShowCreateAccountAsync();
 
     Task GoBackAsync();

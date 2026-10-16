@@ -23,7 +23,7 @@ A cross-platform mobile app for looking up license plates and reading or leaving
 1. Go to the [Firebase console](https://console.firebase.google.com) and create a project.
 2. Add an **Android app** with application ID `com.plated.app` (or update `ApplicationId` in `Plated/Plated.csproj` to match whatever you use). Download the generated **`google-services.json`** and place it at `Plated/Platforms/Android/google-services.json`.
 3. Add an **iOS app** with bundle ID `com.plated.app`. Download **`GoogleService-Info.plist`** and place it at `Plated/Platforms/iOS/GoogleService-Info.plist`.
-4. In **Build > Authentication > Sign-in method**, enable **Google**.
+4. In **Build > Authentication > Sign-in method**, enable **Google** and **Email/Password**. New email accounts must confirm their address (a link Firebase emails them) before they can post; `firestore.rules` enforces this on the server, so publish the rules in step 5.
 5. In **Build > Firestore Database**, create a database (start in production mode), then publish the rules in [`firestore.rules`](firestore.rules) (repo root) via the Firebase console's Rules tab or the Firebase CLI (`firebase deploy --only firestore:rules`).
 
 The rules file is provided as a starting point: authenticated users can read; writes are restricted to the user's own uid on their fields.
