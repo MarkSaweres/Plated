@@ -26,6 +26,11 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!-- App Attest entitlement for Firebase App Check (iOS release builds only) -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' and '$(Configuration)' == 'Release'">
+		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+	</PropertyGroup>
+
 	<!-- Workaround for XA0129 Fast Deployment failure in Debug -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">
 		<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
@@ -64,6 +69,9 @@
 		<PackageReference Include="Plugin.Firebase.Core" Version="4.2.0" />
 		<PackageReference Include="Plugin.Firebase.Auth" Version="5.0.1" />
 		<PackageReference Include="Plugin.Firebase.Firestore" Version="4.0.0" />
+
+		<!-- App Check: proves requests come from the real Plated app (Play Integrity / App Attest) -->
+		<PackageReference Include="Plugin.Firebase.AppCheck" Version="4.0.0" />
 
 		<!-- Banner ads (Google AdMob) and the one-time "Remove ads" purchase -->
 		<PackageReference Include="Plugin.MauiMTAdmob" Version="2.5.0" />

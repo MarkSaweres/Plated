@@ -28,6 +28,16 @@ A cross-platform mobile app for looking up license plates and reading or leaving
 
 The rules file is provided as a starting point: authenticated users can read; writes are restricted to the user's own uid on their fields.
 
+### Firebase App Check (bot protection)
+
+App Check makes Firebase reject requests that don't come from the genuine app. The app already sends App Check tokens (`Plated/AppCheckConfig.cs`): the **debug** provider in Debug builds and **Play Integrity** (Android) / **App Attest** (iOS) in Release builds.
+
+1. Firebase console > **Build > App Check > Apps**: register the Android app (provider: Play Integrity) and the iOS app (provider: App Attest).
+2. Run a Debug build once. The Output window logs `Enter this debug secret into the allow list in the Firebase Console...`; add that token under the app's **Manage debug tokens**. Each fresh emulator or reinstall prints a new one.
+3. **App Check > APIs > Cloud Firestore**: watch the verified-request percentage, then click **Enforce** once your own builds show as verified.
+
+Play Integrity only works for apps installed from Google Play (an internal testing track is enough), so enforce only when real builds are being distributed that way.
+
 ### 2. Wire up Google Sign-In client IDs
 
 **Android** — after enabling Google sign-in in step 1.4, Firebase auto-creates a **Web client ID** OAuth client (Google Cloud Console → APIs & Services → Credentials → "Web client (auto created by Google Service)"). Copy it into:

@@ -1,5 +1,6 @@
 using Foundation;
 using Google.SignIn;
+using Plugin.Firebase.AppCheck;
 using Plugin.Firebase.Core.Platforms.iOS;
 using UIKit;
 
@@ -12,6 +13,8 @@ public class AppDelegate : MauiUIApplicationDelegate
 
     public override bool FinishedLaunching(UIApplication app, NSDictionary options)
     {
+        // Must be configured before Firebase starts.
+        CrossFirebaseAppCheck.Configure(AppCheckConfig.Options);
         CrossFirebase.Initialize();
 
         var googleServicesInfo = NSMutableDictionary.FromFile("GoogleService-Info.plist");

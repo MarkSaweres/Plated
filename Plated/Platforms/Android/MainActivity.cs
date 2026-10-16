@@ -2,6 +2,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Microsoft.Maui.ApplicationModel;
+using Plugin.Firebase.AppCheck;
 using Plugin.Firebase.Core.Platforms.Android;
 using Plugin.MauiMtAdmob;
 
@@ -13,6 +14,10 @@ public class MainActivity : MauiAppCompatActivity
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+
+        // Must be configured before Firebase starts. Debug builds (emulators, sideloaded APKs) can't
+        // pass Play Integrity, so they use the debug provider, whose token you allow-list in the console.
+        CrossFirebaseAppCheck.Configure(AppCheckConfig.Options);
         CrossFirebase.Initialize(this, () => Platform.CurrentActivity!);
         CrossMauiMTAdmob.Current.Init(this, AdConfig.AppId);
     }
