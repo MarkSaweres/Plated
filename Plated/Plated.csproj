@@ -86,6 +86,12 @@
 		<PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.6.0.1" />
 		<PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.6.0.2" />
 		<PackageReference Include="Xamarin.Google.Android.Libraries.Identity.GoogleId" Version="1.1.0.16" />
+
+		<!-- Keep these two on the same version. Play Services pulls Fragment up to 1.9.x, which absorbed the
+		     Ktx classes, while Navigation still asks for Ktx 1.8.8.1; together they fail the Java build with
+		     "defined multiple times" errors. -->
+		<PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.9.1" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.9.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
