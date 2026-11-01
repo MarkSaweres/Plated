@@ -59,6 +59,7 @@ public static class MauiProgram
         services.AddSingleton<IPhotoCaptureService, MediaPickerPhotoCaptureService>();
         services.AddSingleton<IPlateOcrService, PlateOcrService>();
         services.AddSingleton<IAppNavigator, AppNavigator>();
+        services.AddSingleton<IRecentPlatesService, RecentPlatesService>();
         services.AddSingleton<AdsState>();
         services.AddSingleton<IPurchaseService, StorePurchaseService>();
         services.AddSingleton<IInterstitialAdService, InterstitialAdService>();

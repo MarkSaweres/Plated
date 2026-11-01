@@ -3,18 +3,30 @@
     x:Class="Plated.Views.AddEntryPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     x:DataType="vm:AddEntryViewModel"
     Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24,20,24,32" Spacing="20">
+        <VerticalStackLayout Spacing="0">
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Add an entry" Style="{StaticResource ScreenTitle}" />
-                <Label Text="Snap or upload a photo and we'll try to read the plate for you."
-                       Style="{StaticResource Subtle}" />
-            </VerticalStackLayout>
+            <Border Background="{StaticResource HeroBrush}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 0,0,32,32"
+                    Padding="24,24,24,30">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Add an entry"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="30"
+                           TextColor="White" />
+                    <Label Text="Snap or upload a photo and we'll try to read the plate for you."
+                           FontSize="14"
+                           TextColor="#C7D2E8" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Padding="24,22,24,32" Spacing="20">
 
             <Grid>
                 <Border Style="{StaticResource FieldBorder}"
@@ -117,6 +129,7 @@
                     Command="{Binding SubmitCommand}"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

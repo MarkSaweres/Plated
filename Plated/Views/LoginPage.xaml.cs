@@ -8,7 +8,7 @@ public partial class LoginPage : ContentPage
     public LoginPage(LoginViewModel viewModel)
     {
         InitializeComponent();
-        PageStyling.ApplyLightStatusBar(this);
+        PageStyling.ApplyDarkStatusBar(this);
         BindingContext = viewModel;
     }
 }

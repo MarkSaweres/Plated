@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls;
 using Plated.Core.Models;
 using Plated.Core.Navigation;
 using Plated.Core.Services;
+using Plated.Core.UI;
 
 namespace Plated.Core.ViewModels;
 
@@ -18,7 +19,11 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
     public ObservableCollection<PlateComment> Comments { get; } = new();
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StateName))]
     private string state = string.Empty;
+
+    /// <summary>"California" for "CA", shown on the plate.</summary>
+    public string StateName => UsStates.NameOf(State);
 
     [ObservableProperty]
     private string plateNumber = string.Empty;
@@ -63,6 +68,9 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
 
         _ = LoadAsync();
     }
+
+    [RelayCommand]
+    private Task GoBackAsync() => Shell.Current.GoToAsync("..");
 
     [RelayCommand]
     private async Task LoadAsync()
@@ -115,6 +123,7 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
             return;
         }
 
+        Haptics.Tap();
         IsBusy = true;
         ErrorMessage = null;
         try
@@ -144,6 +153,7 @@ public partial class PlateDetailViewModel : BaseViewModel, IQueryAttributable
             return;
         }
 
+        Haptics.Tap();
         _reportTarget = comment;
         IsReportSent = false;
         ReportError = null;

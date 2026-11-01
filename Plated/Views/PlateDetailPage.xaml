@@ -4,32 +4,83 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Plated.Controls"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
     xmlns:vm="clr-namespace:Plated.Core.ViewModels;assembly=Plated.Core"
     xmlns:models="clr-namespace:Plated.Core.Models;assembly=Plated.Core"
     x:DataType="vm:PlateDetailViewModel"
+    BackgroundColor="{StaticResource PageBg}"
+    Shell.NavBarIsVisible="False"
     Title="Plate">
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
 
-        <VerticalStackLayout Grid.Row="0" Padding="24,8,24,16" Spacing="10">
-            <Border Style="{StaticResource PlateBorder}" HorizontalOptions="Center" Padding="36,10,36,14">
-                <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
-                    <Label Text="{Binding State}"
-                           FontFamily="CaveatBold"
-                           FontSize="28"
-                           TextColor="{StaticResource PlateRed}"
-                           HorizontalOptions="Center" />
-                    <Label Text="{Binding PlateNumber}"
-                           FontFamily="OpenSansSemibold"
-                           FontSize="38"
-                           CharacterSpacing="4"
-                           TextColor="{StaticResource OffBlack}"
-                           HorizontalOptions="Center" />
-                </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="0" Spacing="0">
+            <Border Background="{StaticResource HeroBrush}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 0,0,32,32"
+                    Padding="16,16,16,92">
+                <ImageButton Command="{Binding GoBackCommand}"
+                             HorizontalOptions="Start"
+                             WidthRequest="44"
+                             HeightRequest="44"
+                             Padding="10"
+                             CornerRadius="22"
+                             BackgroundColor="#29FFFFFF"
+                             AutomationProperties.Name="Back">
+                    <ImageButton.Source>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xE5C4;" Size="24" Color="White" />
+                    </ImageButton.Source>
+                </ImageButton>
             </Border>
-            <Label Text="{Binding CommentCount, StringFormat='{0} comments'}"
-                   Style="{StaticResource Subtle}"
-                   HorizontalOptions="Center" />
+
+            <Border Style="{StaticResource PlateBorder}"
+                    Margin="20,-72,20,0"
+                    Padding="18,10,18,14">
+                <Border.Shadow>
+                    <Shadow Brush="#0B1B33" Opacity="0.28" Radius="24" Offset="0,12" />
+                </Border.Shadow>
+                <Grid>
+                    <Border WidthRequest="8" HeightRequest="8" Padding="0" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 4" BackgroundColor="#CBD5E1"
+                            HorizontalOptions="Start" VerticalOptions="Start" Margin="-6,-2,0,0" />
+                    <Border WidthRequest="8" HeightRequest="8" Padding="0" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 4" BackgroundColor="#CBD5E1"
+                            HorizontalOptions="End" VerticalOptions="Start" Margin="0,-2,-6,0" />
+                    <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
+                        <Label Text="{Binding StateName}"
+                               FontFamily="CaveatBold"
+                               FontSize="34"
+                               TextColor="{StaticResource PlateRed}"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding PlateNumber}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="44"
+                               CharacterSpacing="6"
+                               TextColor="{StaticResource OffBlack}"
+                               HorizontalOptions="Center" />
+                        <shapes:Path Data="M0,10 C8,2 16,2 24,10 C32,18 40,18 48,10 C56,2 64,2 72,10 C80,18 88,18 96,10"
+                                     Stroke="{StaticResource PlateBlueBrush}"
+                                     StrokeThickness="4"
+                                     StrokeLineCap="Round"
+                                     HeightRequest="20"
+                                     WidthRequest="96"
+                                     HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border HorizontalOptions="Center"
+                    Margin="0,14,0,10"
+                    Padding="14,6"
+                    BackgroundColor="White"
+                    Stroke="#D5DBE8"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 16">
+                <Label Text="{Binding CommentCount, StringFormat='{0} comments'}"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="13"
+                       TextColor="{StaticResource Primary}" />
+            </Border>
         </VerticalStackLayout>
 
         <RefreshView Grid.Row="1" IsRefreshing="{Binding IsBusy}" Command="{Binding LoadCommand}">
@@ -53,10 +104,10 @@
                                             Stroke="Transparent"
                                             StrokeThickness="0"
                                             StrokeShape="RoundRectangle 20"
-                                            BackgroundColor="{StaticResource AccentSoft}">
+                                            BackgroundColor="{StaticResource PlateBlue}">
                                         <Label Text="{Binding AuthorDisplayName, Converter={StaticResource InitialConverter}}"
                                                FontFamily="OpenSansSemibold"
-                                               TextColor="{StaticResource Accent}"
+                                               TextColor="White"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center" />
                                     </Border>
@@ -105,7 +156,7 @@
                     <ImageButton Grid.Column="1"
                                  Command="{Binding AddCommentCommand}"
                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                                 BackgroundColor="{StaticResource Primary}"
+                                 BackgroundColor="{StaticResource PlateRed}"
                                  WidthRequest="48"
                                  HeightRequest="48"
                                  Padding="12"

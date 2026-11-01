@@ -9,7 +9,7 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-        PageStyling.ApplyLightStatusBar(this);
+        PageStyling.ApplyDarkStatusBar(this);
         Routing.RegisterRoute(Routes.PlateDetail, typeof(PlateDetailPage));
     }
 }

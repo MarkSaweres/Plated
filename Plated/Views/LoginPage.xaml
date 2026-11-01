@@ -10,9 +10,31 @@
     Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24,32" Spacing="22" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="0">
 
-            <Border Style="{StaticResource PlateBorder}" HorizontalOptions="Center" Padding="30,18">
+            <Border Background="{StaticResource HeroBrush}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 0,0,32,32"
+                    Padding="24,32,24,100">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Who's behind&#10;that plate?"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="32"
+                           LineHeight="1.1"
+                           TextColor="White" />
+                    <Label Text="See what people are saying about a license plate, or leave a note of your own."
+                           FontSize="14"
+                           TextColor="#C7D2E8" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PlateBorder}"
+                    HorizontalOptions="Center"
+                    Margin="0,-70,0,0"
+                    Padding="34,12,34,16">
+                <Border.Shadow>
+                    <Shadow Brush="#0B1B33" Opacity="0.28" Radius="24" Offset="0,12" />
+                </Border.Shadow>
                 <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
                     <Label Text="California"
                            FontFamily="CaveatBold"
@@ -36,10 +58,7 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Label Text="See what people are saying about a license plate, or leave a note of your own."
-                   Style="{StaticResource Subtle}"
-                   HorizontalTextAlignment="Center"
-                   Margin="12,0" />
+            <VerticalStackLayout Padding="24,24,24,32" Spacing="22">
 
             <Border Style="{StaticResource CardBorder}" Padding="18">
                 <VerticalStackLayout Spacing="12">
@@ -96,6 +115,7 @@
                     Command="{Binding SignInWithGoogleCommand}"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

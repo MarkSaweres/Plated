@@ -19,5 +19,17 @@ public static class PageStyling
             StatusBarStyle = StatusBarStyle.DarkContent,
         });
     }
+
+    private static readonly Color HeroNavy = Color.FromArgb("#0B1B33");
+
+    /// <summary>Navy status bar with light icons, to sit seamlessly above the gradient page headers.</summary>
+    public static void ApplyDarkStatusBar(Page page)
+    {
+        page.Behaviors.Add(new StatusBarBehavior
+        {
+            StatusBarColor = HeroNavy,
+            StatusBarStyle = StatusBarStyle.LightContent,
+        });
+    }
 #pragma warning restore CA1416
 }

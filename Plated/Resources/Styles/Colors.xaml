@@ -36,6 +36,15 @@
     <Color x:Key="Gray900">#1F2937</Color>
     <Color x:Key="Gray950">#0F172A</Color>
 
+    <Color x:Key="NavyMid">#12306B</Color>
+
+    <!-- Header gradient used behind page titles and the license plate card -->
+    <LinearGradientBrush x:Key="HeroBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#0B1B33" Offset="0.0" />
+        <GradientStop Color="#12306B" Offset="0.58" />
+        <GradientStop Color="#1D4ED8" Offset="1.0" />
+    </LinearGradientBrush>
+
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
